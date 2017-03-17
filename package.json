@@ -1,0 +1,47 @@
+{
+  "name": "moltress-api",
+  "version": "1.0.0",
+  "description": "Moltress API - Firebase + HAPI",
+  "main": "index.js",
+  "scripts": {
+    "test": "lab -T node_modules/lab-babel -t 100 -S",
+    "start": "babel-node index.js",
+    "run": "babel-node index.js",
+    "build": "babel . -d .dist --ignore=\"node_modules\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wbarahona/moltress-api.git"
+  },
+  "keywords": [
+    "firebase",
+    "hapi",
+    "restful",
+    "api"
+  ],
+  "author": "Willmer Barahona",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/wbarahona/moltress-api/issues"
+  },
+  "homepage": "https://github.com/wbarahona/moltress-api#readme",
+  "dependencies": {
+    "firebase": "^3.7.2",
+    "firebase-admin": "^4.1.3",
+    "hapi": "^16.1.0"
+  },
+  "devDependencies": {
+    "babel-cli": "*",
+    "babel-core": "*",
+    "babel-preset-es2015-node5": "*",
+    "babel-preset-stage-3": "*",
+    "babel-register": "*",
+    "code": "^4.0.0",
+    "inert": "^4.1.0",
+    "joi": "^10.2.2",
+    "lab": "^13.0.1",
+    "lab-babel": "^1.1.1",
+    "lout": "^10.0.0",
+    "vision": "^4.1.1"
+  }
+}
