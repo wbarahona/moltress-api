@@ -1,23 +1,29 @@
+/*jshint esversion: 6 */
+
+import config from '../config';
+import routes from  './routes';
+import Hapi from 'hapi';
+import Vision from 'vision';
+import Inert from 'inert';
+import Lout from 'lout';
+
+let Server = null;
+
+(function () {
 'use strict';
 //
 // Bootstrap api here
 // ----------------------------------------------------------
-    import config from '../config';
-    import routes from  './routes';
-    import Hapi from 'hapi';
-    import Vision from 'vision';
-    import Inert from 'inert';
-    import Lout from 'lout';
+    Server = new Hapi.Server(config.cors);
 
-    const server            = new Hapi.Server(config.cors);
-
-    server.connection({
+    Server.connection({
         host: 'localhost',
         port: 8001
     });
 
-    server.route(routes(server));
+    Server.route(routes(Server));
 
-    server.register([Vision, Inert, { register: Lout }], (err) => {});
+    Server.register([Vision, Inert, { register: Lout }], (err) => {});
+}());
 
-    export default server;
+export default Server;
