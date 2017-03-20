@@ -9,17 +9,17 @@
     const lab = exports.lab = Lab.script();
     const expect = Code.expect;
 
-    lab.experiment('Users endpoint,', function() {
+    lab.experiment('Users endpoint,', () => {
         //
         // test user response by id
         // -----------------------------------------------------------------
-            lab.test('GET user by id', function(done) {
+            lab.test('GET user by id', (done) => {
                 const options = {
                     method: 'GET',
                     url: '/api/v1/user/12333'
                 };
 
-                server.inject(options, function(response) {
+                server.inject(options, (response) => {
                     const result = response.result;
                     // Assert that we are fetching the proper endpoint
                     expect(response.statusCode).to.not.be.equal(404);
@@ -37,7 +37,7 @@
         //
         // test user response to create
         // ----------------------------------------------------------------
-            lab.test('POST new user', function(done) {
+            lab.test('POST new user', (done) => {
                 const options = {
                     method: 'POST',
                     url: '/api/v1/user/',

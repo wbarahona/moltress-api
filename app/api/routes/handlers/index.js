@@ -2,6 +2,7 @@
 
 import UsersHandler from './usershandler';
 import ItemsHandler from './itemshandler';
+import AuthHandler from './authentichandler';
 
 const Handlers = {};
 
@@ -10,6 +11,7 @@ const Handlers = {};
 
     Handlers.users = UsersHandler;
     Handlers.items = ItemsHandler;
+    Handlers.auth = AuthHandler;
 }());
 
 export default Handlers;

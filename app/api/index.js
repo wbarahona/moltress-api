@@ -6,6 +6,7 @@ import Hapi from 'hapi';
 import Vision from 'vision';
 import Inert from 'inert';
 import Lout from 'lout';
+import InitService from './model/services/init';
 
 let Server = null;
 
@@ -24,6 +25,8 @@ let Server = null;
     Server.route(routes(Server));
 
     Server.register([Vision, Inert, { register: Lout }], (err) => {});
+
+    InitService.init();
 }());
 
 export default Server;

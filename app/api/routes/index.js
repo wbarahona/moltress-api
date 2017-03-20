@@ -7,7 +7,7 @@ let RoutesModule = null;
 
 (function () {
 'use strict';
-    const { items, users } = handlers;
+    const { items, users, auth } = handlers;
 
     // TODO: have each route object to each handler as object in the end
     // then push the objects into the RoutesModule
@@ -76,6 +76,46 @@ let RoutesModule = null;
         },
         {
             method: 'POST',
+            path: '/api/v1/checktoken/',
+            config: {
+                handler: auth.checktoken,
+                description: 'Checks user token',
+                validate: {
+                    payload: {
+                        token: joi.string()
+                                  .required()
+                                  .description('User\'s token')
+                                  .example('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+                    }
+                },
+                response: {
+                    schema: auth.schema.auth
+                },
+                auth: false
+            }
+        },
+        {
+            method: 'POST',
+            path: '/api/v1/createtoken/{uid}',
+            config: {
+                handler: auth.createtoken,
+                description: 'Creates a custom token',
+                validate: {
+                    params: {
+                        uid: joi.string()
+                                .required()
+                                .description('User\'s uid')
+                                .example('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+                    }
+                },
+                response: {
+                    schema: auth.schema.auth
+                },
+                auth: false
+            }
+        },
+        {
+            method: 'POST',
             path: '/api/v1/user/',
             config: {
                 handler: users.saveUser,
@@ -83,9 +123,9 @@ let RoutesModule = null;
                 validate: {
                     payload: {
                         fname: joi.string()
-                               .required()
-                               .description('User\'s first name')
-                               .example('Nathan'),
+                                  .required()
+                                  .description('User\'s first name')
+                                  .example('Nathan'),
                         lname: joi.string()
                                   .required()
                                   .description('User\'s last name')

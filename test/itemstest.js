@@ -9,17 +9,17 @@
     const lab = exports.lab = Lab.script();
     const expect = Code.expect;
 
-    lab.experiment('Items endpoint,', function() {
+    lab.experiment('Items endpoint,', () => {
         //
         // test items response
         // -----------------------------------------------------------------
-            lab.test('GET all items', function(done) {
+            lab.test('GET all items', (done) => {
                 const options = {
                     method: 'GET',
                     url: '/api/v1/items/'
                 };
 
-                server.inject(options, function(response) {
+                server.inject(options, (response) => {
                     const result = response.result;
 
                     // Assert that we are fetching the proper endpoint
@@ -38,13 +38,13 @@
         //
         // test item response by name
         // -----------------------------------------------------------------
-            lab.test('GET item by name', function(done) {
+            lab.test('GET item by name', (done) => {
                 const options = {
                     method: 'GET',
                     url: '/api/v1/item/12333'
                 };
 
-                server.inject(options, function(response) {
+                server.inject(options, (response) => {
                     const result = response.result;
 
                     // Assert that we are fetching the proper endpoint
