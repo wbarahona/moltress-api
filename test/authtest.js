@@ -18,7 +18,7 @@
             return promise;
         });
 
-        lab.test('returns true when 1 + 1 equals 2', () => {
+        lab.test('create the token service', () => {
 
             return AuthService.createtoken('92222fd1-c3a1-4d5d-bb1c-f029b339138e')
                     .then((result) => {

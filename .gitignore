@@ -38,8 +38,7 @@ Thumbs.db
 
 # Special files       #
 #######################
-**/**/project-8357267294132255471-firebase-adminsdk-f695r-d802a4679f.json
-**/**/hndelivery-f556e6f925b2.json
+**/**/credentials/
 
 # Node modules ignore #
 #######################

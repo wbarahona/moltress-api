@@ -4,7 +4,7 @@ import joi from 'joi';
 
 const ItemsHandler = {};
 
-(function () {
+(() => {
 'use strict';
 
     ItemsHandler.all = (request, reply) => {
@@ -90,6 +90,6 @@ const ItemsHandler = {};
                                                         .example({name: 'Item1'})
                             }).label('item');
 
-}());
+})();
 
 export default ItemsHandler;

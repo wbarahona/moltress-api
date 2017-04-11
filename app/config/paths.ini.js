@@ -2,7 +2,7 @@
 
 const paths = {};
 
-(function () {
+(() => {
 'use strict';
 //
 // API PATHS SHALL BE DECLARED HERE BOY!
@@ -28,6 +28,6 @@ const paths = {};
         paths.routes = {};
         paths.routes.root = `${ paths.app.api }/routes`;
         paths.routes.users = `${ paths.routes.root }/users`;
-}());
+})();
 
 export default paths;

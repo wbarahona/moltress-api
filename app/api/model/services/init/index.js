@@ -2,13 +2,13 @@
 
 import * as Firebase from 'firebase-admin';
 // import Firebase from 'firebase';
-import serviceAccount from './project-8357267294132255471-firebase-adminsdk-f695r-d802a4679f.json';
+import serviceAccount from './credentials/hndelivery-c0170572aeb1.json';
 
 const ThisModule = {};
 
 let defaultApp;
 
-(function () {
+(() => {
     'use strict';
 
     ThisModule.init = () => {
@@ -19,11 +19,11 @@ let defaultApp;
 
         // USERS SERVICE GET USER BY EMAIL
         // Admin.auth().getUserByEmail('wbarahona@live.com')
-        // .then(function(userRecord) {
+        // .then((userRecord) => {
         // // See the UserRecord reference doc for the contents of userRecord.
         //     console.log('Successfully fetched user data:', userRecord.toJSON());
         // })
-        // .catch(function(error) {
+        // .catch((error) => {
         //     console.log('Error fetching user data:', error);
         // });
 
@@ -44,7 +44,7 @@ let defaultApp;
 
         // var db = Firebase.database();
         // var ref = db.ref('firedata/users');
-        // ref.on('child_added', function(snapshot) {
+        // ref.on('child_added', (snapshot) => {
         //     var el = snapshot.val();
         //     console.log(el);
         //     console.log(snapshot.key);
@@ -62,6 +62,6 @@ let defaultApp;
     ThisModule.getApp = () => {
         return defaultApp;
     };
-}());
+})();
 
 export default ThisModule;

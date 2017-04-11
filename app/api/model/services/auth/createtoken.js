@@ -10,7 +10,7 @@ const response = {
                     content: {}
                 };
 
-(function () {
+(() => {
     'use strict';
 
     ThisModule.createtoken = (uid) => {
@@ -19,13 +19,13 @@ const response = {
                 // Send token back to client
                 // console.log(customToken);
                 response.code = 1;
-                response.message = 'Token was created successfully for ${ uid }.';
+                response.message = `Token was created successfully for ${ uid }.`;
                 response.content = {customToken: customToken};
                 resolve(response);
             })
             .catch((error) => {
                 // console.log('Error creating custom token:', error);
-                response.message = 'Error creating custom token ${ uid }.';
+                response.message = `Error creating custom token ${ uid }.`;
                 response.content = {error: error};
                 reject(response);
             });
@@ -33,6 +33,6 @@ const response = {
 
         return promise;
     };
-}());
+})();
 
 export default ThisModule;

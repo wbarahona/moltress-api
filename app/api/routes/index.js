@@ -5,7 +5,7 @@ import joi from 'joi';
 
 let RoutesModule = null;
 
-(function () {
+(() => {
 'use strict';
     const { items, users, auth } = handlers;
 
@@ -18,6 +18,8 @@ let RoutesModule = null;
             config: {
                 handler: items.all,
                 description: 'Gets all items from database',
+                notes: 'Gets all items from database does take limit on how many items are to be displayed',
+                tags: ['api', 'all', 'items'],
                 validate: {
                     query: {
                         limit: joi.number()
@@ -40,6 +42,8 @@ let RoutesModule = null;
             config: {
                 handler: items.getItemByName,
                 description: 'Gets the item by name',
+                notes: 'Gets the item by the name sent in the url',
+                tags: ['api', 'item', 'name'],
                 validate: {
                     params: {
                         name: joi.string()
@@ -51,7 +55,7 @@ let RoutesModule = null;
                 response: {
                     schema: items.schema.item
                 },
-                auth: false
+                auth: 'simple'
             }
         },
         {
@@ -60,6 +64,8 @@ let RoutesModule = null;
             config: {
                 handler: users.getUserById,
                 description: 'Gets the user by id',
+                notes: 'Gets the user information by the user id',
+                tags: ['api', 'user', 'info', 'id'],
                 validate: {
                     params: {
                         id: joi.string()
@@ -80,6 +86,8 @@ let RoutesModule = null;
             config: {
                 handler: auth.checktoken,
                 description: 'Checks user token',
+                notes: 'Check token from client app',
+                tags: ['api', 'token', 'validation'],
                 validate: {
                     payload: {
                         token: joi.string()
@@ -100,6 +108,8 @@ let RoutesModule = null;
             config: {
                 handler: auth.createtoken,
                 description: 'Creates a custom token',
+                notes: 'Creates a new token for the user',
+                tags: ['api', 'create', 'token'],
                 validate: {
                     params: {
                         uid: joi.string()
@@ -120,6 +130,8 @@ let RoutesModule = null;
             config: {
                 handler: users.saveUser,
                 description: 'Saves a new user',
+                notes: 'Saves a new user into the database',
+                tags: ['api', 'save', 'user'],
                 validate: {
                     payload: {
                         fname: joi.string()
@@ -163,6 +175,6 @@ let RoutesModule = null;
             }
         }
     ];
-}());
+})();
 
 export default RoutesModule;

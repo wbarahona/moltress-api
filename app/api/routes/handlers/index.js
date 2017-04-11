@@ -6,12 +6,12 @@ import AuthHandler from './authentichandler';
 
 const Handlers = {};
 
-(function () {
+(() => {
 'use strict';
 
     Handlers.users = UsersHandler;
     Handlers.items = ItemsHandler;
     Handlers.auth = AuthHandler;
-}());
+})();
 
 export default Handlers;

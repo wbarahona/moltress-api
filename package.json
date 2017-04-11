@@ -4,7 +4,7 @@
   "description": "Moltress API - Firebase + HAPI",
   "main": "index.js",
   "scripts": {
-    "test": "lab -T node_modules/lab-babel -t 100 -S --leaks",
+    "test": "lab -T node_modules/lab-babel -t 100 -S --leaks --coverage-exclude ../app",
     "lint": "jshint **/*.js",
     "start": "babel-watch index.js",
     "run": "babel-node index.js",
@@ -38,13 +38,15 @@
     "babel-preset-stage-3": "*",
     "babel-register": "*",
     "babel-watch": "^2.0.6",
+    "bcrypt": "^1.0.2",
     "code": "^4.0.0",
+    "hapi-auth-basic": "^4.2.0",
+    "hapi-swagger": "^7.7.0",
     "inert": "^4.1.0",
     "joi": "^10.2.2",
     "jshint": "^2.9.4",
     "lab": "^13.0.1",
     "lab-babel": "^1.1.1",
-    "lout": "^10.0.0",
     "promise": "^7.1.1",
     "vision": "^4.1.1"
   }

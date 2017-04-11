@@ -9,6 +9,8 @@ import api from './app/api';
         api.start(() => {
             console.log('Server started', api.info.uri);
         });
+    } else {
+        console.log('Server is instantated already');
     }
 }());
 

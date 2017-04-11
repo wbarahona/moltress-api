@@ -4,7 +4,7 @@ import joi from 'joi';
 
 const UsersHandler = {};
 
-(function () {
+(() => {
 'use strict';
 
     UsersHandler.getUserById = (request, reply) => {
@@ -65,6 +65,6 @@ const UsersHandler = {};
                                                 .description('This is the response content, this holds an object with the item properties')
                                                 .example({name: 'Item1'})
                             });
-}());
+})();
 
 export default UsersHandler;

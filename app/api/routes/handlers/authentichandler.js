@@ -5,14 +5,14 @@ import AuthService from '../../model/services/auth';
 
 const AuthHandler = {};
 
-(function () {
+(() => {
 'use strict';
 
     AuthHandler.checktoken = (request, reply) => {
         const { payload } = request;
         const { token } = payload;
 
-        AuthService.checktoken(token);
+        // AuthService.checktoken(token);
 
         reply({
             statusCode: 200,
@@ -26,27 +26,25 @@ const AuthHandler = {};
         const { params } = request;
         const { uid } = params;
 
-        AuthService.createtoken(uid).then((response) => {
-            const { code, message, content } = response;
-
-            console.log(response);
+        // AuthService.createtoken(uid).then((response) => {
+        //     const { code, message, content } = response;
 
             reply({
                 statusCode: 200,
-                code: code,
-                message: message,
-                content: content
+                code: 1,
+                message: 'message',
+                content: {}
             }).code(200);
-        },(error) => {
-            const { code, message, content } = error;
-
-            reply({
-                statusCode: 400,
-                code: code,
-                message: message,
-                content: content
-            }).code(400);
-        });
+        // },(error) => {
+        //     const { code, message, content } = error;
+        //
+        //     reply({
+        //         statusCode: 400,
+        //         code: code,
+        //         message: message,
+        //         content: content
+        //     }).code(400);
+        // });
 
     };
 
@@ -75,6 +73,6 @@ const AuthHandler = {};
                                                     .example({name: 'Item1'})
                         }).label('item');
 
-}());
+})();
 
 export default AuthHandler;
