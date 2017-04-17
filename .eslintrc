@@ -24,6 +24,7 @@
     "objectLiteralShorthandMethods": true,
     "objectLiteralShorthandProperties": true,
     "spread": true,
+    "experimentalObjectRestSpread": true,
     "superInFunctions": true,
     "templateStrings": true
   },,

@@ -34,6 +34,8 @@
   "devDependencies": {
     "babel-cli": "*",
     "babel-core": "^6.24.0",
+    "babel-eslint": "^7.2.2",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-es2015-node5": "*",
     "babel-preset-stage-3": "*",
     "babel-register": "*",
@@ -41,6 +43,7 @@
     "bcrypt": "^1.0.2",
     "code": "^4.0.0",
     "hapi-auth-basic": "^4.2.0",
+    "hapi-auth-cookie": "^7.0.0",
     "hapi-swagger": "^7.7.0",
     "inert": "^4.1.0",
     "joi": "^10.2.2",

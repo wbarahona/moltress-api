@@ -1,11 +1,12 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 
 import paths from './paths.ini';
+import pack from '../../package';
 
 const api = {};
 
 (() => {
-'use strict';
+
 //
 // API configuration and global vars
 // ------------------------------------------------------------------------
@@ -23,7 +24,7 @@ const api = {};
     api.plugins.swagger.options = {
         info: {
             'title': 'API Documentation',
-            'version': '0.0.1'
+            'version': pack.version
         }
     };
 })();

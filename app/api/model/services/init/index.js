@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 
 import * as Firebase from 'firebase-admin';
 // import Firebase from 'firebase';
@@ -9,7 +9,6 @@ const ThisModule = {};
 let defaultApp;
 
 (() => {
-    'use strict';
 
     ThisModule.init = () => {
         // defaultApp = Admin.initializeApp({

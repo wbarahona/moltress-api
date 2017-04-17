@@ -1,17 +1,16 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 
 import * as Firebase from 'firebase-admin';
-import promise from 'promise';
+// import promise from 'promise';
 
 const ThisModule = {};
 const response = {
-                    code: 0,
-                    message: '',
-                    content: {}
-                };
+    code: 0,
+    message: '',
+    content: {}
+};
 
 (() => {
-    'use strict';
 
     ThisModule.createtoken = (uid) => {
         const promise = new Promise((resolve, reject) => {

@@ -1,4 +1,4 @@
-/*jshint esversion: 6 */
+/* jshint esversion: 6 */
 
 import handlers from './handlers';
 import joi from 'joi';
@@ -6,12 +6,12 @@ import joi from 'joi';
 let RoutesModule = null;
 
 (() => {
-'use strict';
+
     const { items, users, auth } = handlers;
 
     // TODO: have each route object to each handler as object in the end
     // then push the objects into the RoutesModule
-    RoutesModule = (server) => [
+    RoutesModule = () => [
         {
             method: 'GET',
             path: '/api/v1/items/',
@@ -55,7 +55,10 @@ let RoutesModule = null;
                 response: {
                     schema: items.schema.item
                 },
-                auth: 'simple'
+                auth: {
+                    strategy: 'base',
+                    scope: 'user' // or [‘user’,’admin’]
+                }
             }
         },
         {
@@ -76,50 +79,6 @@ let RoutesModule = null;
                 },
                 response: {
                     schema: users.schema.user
-                },
-                auth: false
-            }
-        },
-        {
-            method: 'POST',
-            path: '/api/v1/checktoken/',
-            config: {
-                handler: auth.checktoken,
-                description: 'Checks user token',
-                notes: 'Check token from client app',
-                tags: ['api', 'token', 'validation'],
-                validate: {
-                    payload: {
-                        token: joi.string()
-                                  .required()
-                                  .description('User\'s token')
-                                  .example('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-                    }
-                },
-                response: {
-                    schema: auth.schema.auth
-                },
-                auth: false
-            }
-        },
-        {
-            method: 'POST',
-            path: '/api/v1/createtoken/{uid}',
-            config: {
-                handler: auth.createtoken,
-                description: 'Creates a custom token',
-                notes: 'Creates a new token for the user',
-                tags: ['api', 'create', 'token'],
-                validate: {
-                    params: {
-                        uid: joi.string()
-                                .required()
-                                .description('User\'s uid')
-                                .example('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-                    }
-                },
-                response: {
-                    schema: auth.schema.auth
                 },
                 auth: false
             }
@@ -172,6 +131,49 @@ let RoutesModule = null;
                 // auth: {
                 //     role: ['ADMIN']
                 // }
+            }
+        },
+        {
+            method: 'POST',
+            path: '/api/v1/login/',
+            config: {
+                handler: auth.login,
+                description: 'Login method to application',
+                notes: 'Logs in a user to the application by saving a cookie',
+                tags: ['api', 'login', 'user'],
+                validate: {
+                    payload: {
+                        email: joi.string()
+                                  .email()
+                                  .required()
+                                  .description('User\'s email')
+                                  .example('nathanexplosion@dethklok.com'),
+                        password: joi.string()
+                                     .min(2)
+                                     .max(200)
+                                     .required()
+                                     .description('User\'s password to login')
+                                     .example('**********')
+                    }
+                },
+                response: {
+                    schema: users.schema.auth
+                },
+                auth: false
+            }
+        },
+        {
+            method: 'POST',
+            path: '/api/v1/logout/',
+            config: {
+                handler: auth.logout,
+                description: 'Logout method from application',
+                notes: 'Logs out a user from the application',
+                tags: ['api', 'logout', 'user'],
+                response: {
+                    schema: users.schema.auth
+                },
+                auth: false
             }
         }
     ];
