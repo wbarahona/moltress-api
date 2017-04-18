@@ -13,57 +13,65 @@
         //
         // test user response by id
         // -----------------------------------------------------------------
-            lab.test('GET user by id', (done) => {
-                const options = {
-                    method: 'GET',
-                    url: '/api/v1/user/12333'
-                };
+        lab.test('GET user by id', (done) => {
+            const options = {
+                method: 'GET',
+                url: '/api/v1/user/12333',
+                credentials: {
+                    scope: 'user'
+                }
+            };
 
-                server.inject(options, (response) => {
-                    const result = response.result;
-                    // Assert that we are fetching the proper endpoint
-                    expect(response.statusCode).to.not.be.equal(404);
+            server.inject(options, (response) => {
+                const result = response.result;
 
-                    // Assert that the endpoint results are valid
-                    expect(result).to.be.instanceof(Object);
-                    expect(result.code).to.be.number().equal(1);
-                    expect(result.message).to.be.string().and.not.to.be.empty();
-                    expect(result.content).to.be.object();
+                // Assert that we are fetching the proper endpoint
+                expect(response.statusCode).to.not.be.equal(404);
 
-                    done();
-                });
+                // Assert that the endpoint results are valid
+                expect(result).to.be.instanceof(Object);
+                expect(result.code).to.be.number().equal(1);
+                expect(result.message).to.be.string().and.not.to.be.empty();
+                expect(result.content).to.be.object();
+
+                done();
             });
+        });
 
         //
         // test user response to create
         // ----------------------------------------------------------------
-            lab.test('POST new user', (done) => {
-                const options = {
-                    method: 'POST',
-                    url: '/api/v1/user/',
-                    payload: {
-                        fname: 'fname',
-                        lname: 'lname',
-                        dob: '1489881121232',
-                        email: 'email@metalocalypse.us',
-                        username: 'username',
-                        password: 'password',
-                        scope: 'scope'
-                    }
-                };
+        lab.test('POST new user', (done) => {
+            const options = {
+                method: 'POST',
+                url: '/api/v1/user/',
+                payload: {
+                    fname: 'fname',
+                    lname: 'lname',
+                    dob: '1489881121232',
+                    email: 'email@metalocalypse.us',
+                    username: 'username',
+                    password: 'password',
+                    scope: 'scope'
+                },
+                credentials: {
+                    scope: 'user'
+                }
+            };
 
-                server.inject(options, function(response) {
-                    const result = response.result;
-                    // Assert that we are fetching the proper endpoint
-                    expect(response.statusCode).to.not.be.equal(404);
+            server.inject(options, (response) => {
+                const result = response.result;
 
-                    // Assert that the endpoint results are valid
-                    expect(result).to.be.instanceof(Object);
-                    expect(result.code).to.be.number().equal(1);
-                    expect(result.message).to.be.string().and.not.to.be.empty();
-                    expect(result.content).to.be.object();
+                // Assert that we are fetching the proper endpoint
+                expect(response.statusCode).to.not.be.equal(404);
 
-                    done();
-                });
+                // Assert that the endpoint results are valid
+                expect(result).to.be.instanceof(Object);
+                expect(result.code).to.be.number().equal(1);
+                expect(result.message).to.be.string().and.not.to.be.empty();
+                expect(result.content).to.be.object();
+
+                done();
             });
+        });
     });

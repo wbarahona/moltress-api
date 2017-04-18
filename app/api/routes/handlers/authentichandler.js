@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
 import joi from 'joi';
-// import UserService from '../../model/services/user';
+import UserService from '../../model/services/user';
 
 const AuthHandler = {};
 
@@ -11,48 +11,37 @@ const AuthHandler = {};
     AuthHandler.login = (request, reply) => {
         const { payload } = request;
         const { email, password } = payload;
+        const { getuserbyemailandpassword } = UserService;
 
-        reply({
-            statusCode: 200,
-            code: 1,
-            message: `well this request is good for ${ email } whose password was: ${ password }`,
-            content: {}
+        getuserbyemailandpassword(email, password).then((resp) => {
+            const { code, message, content } = resp;
+            const { uid, scope } = content;
+            let statusCode = 500;
+
+            if (code !== 1) {
+                statusCode = 401;
+            } else {
+                request.cookieAuth.set({id: uid, scope: scope});
+                statusCode = 200;
+            }
+            reply({
+                statusCode: statusCode,
+                code: code,
+                message: message,
+                content: content
+            }).code(statusCode);
+        }, (err) => {
+            reply({
+                statusCode: 500,
+                code: 0,
+                message: 'There was an error on the request for user and password',
+                content: err
+            }).code(500);
         });
-
-        // getValidatedUser(email, password)
-        // .then((response) => {
-        //     const { code, message, content } = response;
-        //     const { user } = content;
-        //
-        //     if (code === 1) {
-        //         request.auth.session.set(user);
-        //         reply({
-        //             statusCode: 200,
-        //             code: 1,
-        //             message: message,
-        //             content: {}
-        //         });
-        //     } else {
-        //         reply({
-        //             statusCode: 400,
-        //             code: 2,
-        //             message: message,
-        //             content: content
-        //         }).code(400);
-        //     }
-        // })
-        // .catch((err) => {
-        //     reply({
-        //         statusCode: 500,
-        //         code: 0,
-        //         message: 'Error on request!',
-        //         content: err
-        //     }).code(500);
-        // });
     };
 
     AuthHandler.logout = (request, reply) => {
-        request.auth.session.clear();
+        request.cookieAuth.clear();
 
         reply({
             statusCode: 200,

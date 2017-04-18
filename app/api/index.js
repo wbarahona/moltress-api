@@ -33,7 +33,7 @@ let Server = null;
 
     Server.register([Vision, Inert, Cookie, { register: HapiSwagger, options: swagger.options }], (err) => {
         // Server.auth.strategy('simple', 'basic', simpleStrategy);
-        Server.auth.strategy('base', 'cookie', cookieStrategy);
+        Server.auth.strategy('session', 'cookie', true, cookieStrategy);
         Server.route(routes(Server));
         if (err) {console.log(err);}
     });

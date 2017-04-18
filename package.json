@@ -4,7 +4,7 @@
   "description": "Moltress API - Firebase + HAPI",
   "main": "index.js",
   "scripts": {
-    "test": "lab -T node_modules/lab-babel -t 100 -S --leaks --coverage-exclude ../app",
+    "test": "lab -T node_modules/lab-babel --leaks",
     "lint": "jshint **/*.js",
     "start": "babel-watch index.js",
     "run": "babel-node index.js",

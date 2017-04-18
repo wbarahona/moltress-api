@@ -38,10 +38,12 @@ const SecurityService = {};
 
     SecurityService.simpleStrategy = { validateFunc: validate };
 
+    // TODO: these should go to the config object
     SecurityService.cookieStrategy = {
-        password: 'supersecretpassword', // cookie secret
+        password: 'somecrazycookiesecretthatcantbeguesseswouldgohere', // cookie secret
         cookie: 'app-cookie', // Cookie name
-        ttl: 24 * 60 * 60 * 1000 // Set session to 1 day
+        isSecure: false, // required for non-https applications
+        ttl: 24 * 60 * 60 * 1000
     };
 })();
 

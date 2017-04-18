@@ -13,50 +13,56 @@
         //
         // test items response
         // -----------------------------------------------------------------
-            lab.test('GET all items', (done) => {
-                const options = {
-                    method: 'GET',
-                    url: '/api/v1/items/'
-                };
+        lab.test('GET all items', (done) => {
+            const options = {
+                method: 'GET',
+                url: '/api/v1/items/',
+                credentials: {
+                    scope: 'user'
+                }
+            };
 
-                server.inject(options, (response) => {
-                    const result = response.result;
+            server.inject(options, (response) => {
+                const result = response.result;
 
-                    // Assert that we are fetching the proper endpoint
-                    expect(response.statusCode).to.not.be.equal(404);
+                // Assert that we are fetching the proper endpoint
+                expect(response.statusCode).to.not.be.equal(404);
 
-                    // Assert that the endpoint results are valid
-                    expect(result).to.be.instanceof(Object);
-                    expect(result.code).to.be.number().equal(1);
-                    expect(result.message).to.be.string().and.not.to.be.empty();
-                    expect(result.content).to.be.array();
+                // Assert that the endpoint results are valid
+                expect(result).to.be.instanceof(Object);
+                expect(result.code).to.be.number().equal(1);
+                expect(result.message).to.be.string().and.not.to.be.empty();
+                expect(result.content).to.be.array();
 
-                    done();
-                });
+                done();
             });
+        });
 
         //
         // test item response by name
         // -----------------------------------------------------------------
-            lab.test('GET item by name', (done) => {
-                const options = {
-                    method: 'GET',
-                    url: '/api/v1/item/12333'
-                };
+        lab.test('GET item by name', (done) => {
+            const options = {
+                method: 'GET',
+                url: '/api/v1/item/12333',
+                credentials: {
+                    scope: 'user'
+                }
+            };
 
-                server.inject(options, (response) => {
-                    const result = response.result;
+            server.inject(options, (response) => {
+                const result = response.result;
 
-                    // Assert that we are fetching the proper endpoint
-                    expect(response.statusCode).to.not.be.equal(404);
+                // Assert that we are fetching the proper endpoint
+                expect(response.statusCode).to.not.be.equal(404);
 
-                    // Assert that the endpoint results are valid
-                    expect(result).to.be.instanceof(Object);
-                    expect(result.code).to.be.number().equal(1);
-                    expect(result.message).to.be.string().and.not.to.be.empty();
-                    expect(result.content).to.be.object();
+                // Assert that the endpoint results are valid
+                expect(result).to.be.instanceof(Object);
+                expect(result.code).to.be.number().equal(1);
+                expect(result.message).to.be.string().and.not.to.be.empty();
+                expect(result.content).to.be.object();
 
-                    done();
-                });
+                done();
             });
+        });
     });

@@ -33,7 +33,10 @@ let RoutesModule = null;
                 response: {
                     schema: items.schema.items
                 },
-                auth: false
+                auth: {
+                    strategy: 'session',
+                    scope: 'user' // or [‘user’,’admin’]
+                }
             }
         },
         {
@@ -56,7 +59,7 @@ let RoutesModule = null;
                     schema: items.schema.item
                 },
                 auth: {
-                    strategy: 'base',
+                    strategy: 'session',
                     scope: 'user' // or [‘user’,’admin’]
                 }
             }
@@ -80,7 +83,10 @@ let RoutesModule = null;
                 response: {
                     schema: users.schema.user
                 },
-                auth: false
+                auth: {
+                    strategy: 'session',
+                    scope: 'user' // or [‘user’,’admin’]
+                }
             }
         },
         {
@@ -127,10 +133,10 @@ let RoutesModule = null;
                 response: {
                     schema: users.schema.user
                 },
-                auth: false
-                // auth: {
-                //     role: ['ADMIN']
-                // }
+                auth: {
+                    strategy: 'session',
+                    scope: 'user' // or [‘user’,’admin’]
+                }
             }
         },
         {

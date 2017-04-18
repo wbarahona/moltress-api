@@ -2,7 +2,7 @@
 
 import * as Firebase from 'firebase-admin';
 // import Firebase from 'firebase';
-import serviceAccount from './credentials/hndelivery-c0170572aeb1.json';
+import serviceAccount from './credentials/serviceAccountKey.json';
 
 const ThisModule = {};
 
@@ -35,8 +35,7 @@ let defaultApp;
         //
         // data.push({more: 'tests'});
 
-
-        Firebase.initializeApp({
+        defaultApp = Firebase.initializeApp({
             credential: Firebase.credential.cert(serviceAccount),
             databaseURL: 'https://hndelivery.firebaseio.com'
         });
