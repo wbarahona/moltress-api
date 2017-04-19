@@ -2,8 +2,10 @@
 
 import Promise from 'promise';
 import * as Firebase from 'firebase-admin';
+import Config from '../../../../config';
 
 const ThisModule = {};
+const usersRef = Config.references.users;
 const response = {
     code: 2,
     message: '',
@@ -11,10 +13,13 @@ const response = {
 };
 
 (() => {
+    //
     // get user info by username
+    // --------------------------------------------------------
     ThisModule.getuser = (username) => {
         const db = Firebase.database();
-        const ref = db.ref('firedata/users');
+        const ref = db.ref(usersRef);
+
         const promise = new Promise((resolve) => {
             ref.on('value', (snapshot) => {
                 const itemsCollection = snapshot.val();
@@ -29,11 +34,14 @@ const response = {
         return promise;
     };
 
-    // get user info by email + password
-    ThisModule.getuserbyemailandpassword = (email, password) => {
-        const db = Firebase.database();
-        const ref = db.ref('firedata/users');
+    //
+    // get user info by email
+    // --------------------------------------------------------
+    ThisModule.getuserbyemail = (email) => {
         const promise = new Promise((resolve) => {
+            const db = Firebase.database();
+            const ref = db.ref(usersRef);
+
             ref.on('value', (snapshot) => {
                 const itemsCollection = snapshot.val();
 
@@ -41,20 +49,20 @@ const response = {
                     if (itemsCollection.hasOwnProperty(userid)) {
                         const userinfo = itemsCollection[userid];
 
-                        // TODO: Bcrypt and ensure that on save user we encrypt the user
-                        if (userinfo.email === email && userinfo.password === password) {
+                        if (userinfo.email === email && userinfo.active) {
                             // remove password key
                             delete userinfo.password;
                             response.code = 1;
-                            response.message = `User by email: ${ email }, was found!`;
+                            response.message = `User by email: ${ email }, was found. `;
                             response.content = userinfo;
                         }
                     }
                 }
 
                 if (response.code !== 1) {
-                    response.message = `User by email: ${ email }, was not found or wrong credentials were provided`;
+                    response.message = `User by email: ${ email }, was not found. `;
                 }
+
                 resolve(response);
             });
         });

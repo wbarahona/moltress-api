@@ -27,6 +27,8 @@ const api = {};
             'version': pack.version
         }
     };
+    api.references = {};
+    api.references.users = 'firedata/users';
 })();
 
 export default api;

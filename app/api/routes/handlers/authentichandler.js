@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
 import joi from 'joi';
-import UserService from '../../model/services/user';
+import AuthService from '../../model/services/auth';
 
 const AuthHandler = {};
 
@@ -11,9 +11,9 @@ const AuthHandler = {};
     AuthHandler.login = (request, reply) => {
         const { payload } = request;
         const { email, password } = payload;
-        const { getuserbyemailandpassword } = UserService;
+        const { loginemail } = AuthService;
 
-        getuserbyemailandpassword(email, password).then((resp) => {
+        loginemail(email, password).then((resp) => {
             const { code, message, content } = resp;
             const { uid, scope } = content;
             let statusCode = 500;
@@ -34,7 +34,7 @@ const AuthHandler = {};
             reply({
                 statusCode: 500,
                 code: 0,
-                message: 'There was an error on the request for user and password',
+                message: 'There was an error on the request for user and password.',
                 content: err
             }).code(500);
         });
@@ -46,7 +46,7 @@ const AuthHandler = {};
         reply({
             statusCode: 200,
             code: 1,
-            message: 'Successfully logged out',
+            message: 'Successfully logged out.',
             content: {}
         });
     };

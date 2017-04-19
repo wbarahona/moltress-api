@@ -90,6 +90,24 @@ let RoutesModule = null;
             }
         },
         {
+            /*
+             active: true
+             age: "0"
+             code: "92222fd1-c3a1-4d5d-bb1c-f029b339138e"
+             email: "wbarahona@live.com"
+             fname: "Willmer"
+             hash: "$2a$10$ZWWMhJiwG6dGwr1I0mlLBeILuxeVCPXR1dH0jowr..."
+             lname: "Barahona"
+             password: "usmarinescorps"
+             role
+               accesses
+                 categories: true
+                 items: false
+                 lists: true
+                 orders: true
+             scope: "user"
+             uid: "92222fd1-c3a1-4d5d-bb1c-f029b339138e"
+            */
             method: 'POST',
             path: '/api/v1/user/',
             config: {
@@ -99,6 +117,25 @@ let RoutesModule = null;
                 tags: ['api', 'save', 'user'],
                 validate: {
                     payload: {
+                        active: joi.boolean()
+                                   .required()
+                                   .description('User is active? true / false')
+                                   .example(false),
+                        age: joi.number()
+                                .min(18)
+                                .max(100)
+                                .required()
+                                .description('User\'s age')
+                                .example(20),
+                        code: joi.string()
+                                 .required()
+                                 .description('Firebase\'s UID for the user registered using their api')
+                                 .example('92222fd1-c3a1-4d5d-bb1c-f029b339138e'),
+                        email: joi.string()
+                                  .required()
+                                  .email()
+                                  .description('User\'s email')
+                                  .example('nathanexplosion@dethklok.com'),
                         fname: joi.string()
                                   .required()
                                   .description('User\'s first name')
@@ -107,27 +144,24 @@ let RoutesModule = null;
                                   .required()
                                   .description('User\'s last name')
                                   .example('Explosion'),
-                        dob: joi.date()
-                                .timestamp()
-                                .required()
-                                .description('User\'s date of birth in javascript format')
-                                .example('1489881121232'),
-                        email: joi.string()
-                                  .required()
-                                  .email(),
-                        username: joi.string()
-                                     .required()
-                                     .description('User\'s username to login')
-                                     .example('nathanexplosion'),
                         password: joi.string()
                                      .required()
                                      .min(6)
                                      .max(25)
                                      .description('User\'s password to login')
                                      .example('**********'),
+                        dob: joi.date()
+                                .timestamp()
+                                .required()
+                                .description('User\'s date of birth in javascript format')
+                                .example('1489881121232'),
                         scope: joi.string()
                                   // .valid(authService.scopes)
-                                  .description('User\'s scope')
+                                  .description('User\'s scope'),
+                        uid: joi.string()
+                                .required()
+                                .description('Firebase\'s UID for the user registered using their api')
+                                .example('92222fd1-c3a1-4d5d-bb1c-f029b339138e')
                     }
                 },
                 response: {

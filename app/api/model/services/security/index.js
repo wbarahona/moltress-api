@@ -1,14 +1,12 @@
 /* jshint esversion: 6 */
 
 import simple from './simple';
+import encrypt from './encrypt';
 
-const SecurityService = {};
+let SecurityService = {};
 
 (() => {
-    const { simpleStrategy, cookieStrategy } = simple;
-
-    SecurityService.simpleStrategy = simpleStrategy;
-    SecurityService.cookieStrategy = cookieStrategy;
+    SecurityService = { ... simple, ... encrypt };
 })();
 
 export default SecurityService;

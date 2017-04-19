@@ -2,7 +2,7 @@
 
 import Bcrypt from 'bcrypt';
 
-const SecurityService = {};
+const ThisModule = {};
 
 (() => {
     const users = [
@@ -36,10 +36,10 @@ const SecurityService = {};
         return true;
     };
 
-    SecurityService.simpleStrategy = { validateFunc: validate };
+    ThisModule.simpleStrategy = { validateFunc: validate };
 
     // TODO: these should go to the config object
-    SecurityService.cookieStrategy = {
+    ThisModule.cookieStrategy = {
         password: 'somecrazycookiesecretthatcantbeguesseswouldgohere', // cookie secret
         cookie: 'app-cookie', // Cookie name
         isSecure: false, // required for non-https applications
@@ -47,4 +47,4 @@ const SecurityService = {};
     };
 })();
 
-export default SecurityService;
+export default ThisModule;

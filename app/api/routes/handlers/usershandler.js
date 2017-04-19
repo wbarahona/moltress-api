@@ -21,22 +21,32 @@ const UsersHandler = {};
 
     UsersHandler.saveUser = (request, reply) => {
         const { payload } = request;
-        const { uid, id, fname, lname, dob, email, username, password, scope } = payload;
+        const { active, age, code, email, fname, hash, lname, password, scope, uid } = payload;
+        const role = {
+            accesses: {
+                categories: true,
+                items: true,
+                lists: true,
+                order: true
+            }
+        };
 
         reply({
             statusCode: 200,
             code: 1,
             message: 'User was saved correctly!',
             content: {
-                uid: uid,
-                id: id,
-                fname: fname,
-                lname: lname,
-                dob: dob,
+                active: active,
+                age: age,
+                code: code,
                 email: email,
-                username: username,
+                fname: fname,
+                hash: hash,
+                lname: lname,
                 password: password,
-                scope: scope
+                role: role,
+                scope: scope,
+                uid: uid
             }
         }).code(200);
     };
@@ -52,10 +62,10 @@ const UsersHandler = {};
                         .description('This is the response code')
                         .example(200),
         code: joi.number()
-                  .required()
-                  .integer()
-                  .description('This is the response code from the service')
-                  .example(0),
+                 .required()
+                 .integer()
+                 .description('This is the response code from the service')
+                 .example(0),
         message: joi.string()
                     .required()
                     .description('This is the response message from the service, it shall be passed to the reply')
