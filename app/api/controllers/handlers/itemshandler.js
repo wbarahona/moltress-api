@@ -19,7 +19,7 @@ const ItemsHandler = {};
         }).code(200);
     };
 
-    ItemsHandler.getItemById = (request, reply) => {
+    ItemsHandler.getitembyid = (request, reply) => {
         const { params } = request;
         const { id } = params;
 
@@ -31,7 +31,7 @@ const ItemsHandler = {};
         }).code(200);
     };
 
-    ItemsHandler.getItemByName = (request, reply) => {
+    ItemsHandler.getitembyname = (request, reply) => {
         const { params } = request;
         const { name } = params;
 

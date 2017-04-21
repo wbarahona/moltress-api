@@ -71,11 +71,10 @@ const AuthHandler = {};
                     .required()
                     .description('This is the response message from the service, it shall be passed to the reply')
                     .example('This request was successful'),
-        content: joi.array()
+        content: joi.object()
                     .required()
-                    .items(joi.object())
-                    .description('This is the response content, this holds the array of items')
-                    .example([{name: 'Item1'}, {name: 'Item2'}])
+                    .description('This is the response content if needed this contains some useful resource')
+                    .example({name: 'Item1'})
     }).label('auth');
 
 })();

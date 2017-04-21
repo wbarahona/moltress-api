@@ -16,18 +16,37 @@ const response = {
     //
     // get user info by username
     // --------------------------------------------------------
-    ThisModule.getuser = (username) => {
+    ThisModule.getuser = (uid) => {
         const db = Firebase.database();
         const ref = db.ref(usersRef);
+        let userinfo = null;
 
-        const promise = new Promise((resolve) => {
+        const promise = new Promise((resolve, reject) => {
             ref.on('value', (snapshot) => {
                 const itemsCollection = snapshot.val();
 
-                response.code = 1;
-                response.message = `fetched info now searching by ${ username }`;
-                response.content = itemsCollection;
+                for (const id in itemsCollection) {
+                    if (itemsCollection.hasOwnProperty(id)) {
+                        userinfo = itemsCollection[id];
+                        if (userinfo.uid === uid) {
+                            response.code = 1;
+                            response.message = `fetched info searching by id: ${ uid }`;
+                            response.content = userinfo;
+                        }
+                    }
+                }
+
+                if (response.code !== 1) {
+                    response.message = `User by id: ${ uid }, was not found. `;
+                }
+
                 resolve(response);
+            }, (err) => {
+                response.code = 0;
+                response.message = 'There is a error finding users';
+                response.content = err;
+
+                reject(response);
             });
         });
 

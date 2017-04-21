@@ -15,22 +15,29 @@ const response = {
 
 (() => {
     //
-    // Save user to firebase
+    // Edit user to firebase
     // --------------------------------------------------------
-    ThisModule.saveuser = (userinfo) => {
+    ThisModule.edituser = (id, userinfo) => {
         const db = Firebase.database();
         const ref = db.ref(usersRef);
 
         const promise = new Promise((resolve) => {
             const { password } = userinfo;
 
-            SecurityService.hash(password).then((resp) => {
-                userinfo.hash = resp;
-                ref.push(userinfo);
+            if (password) {
+                SecurityService.hash(password).then((resp) => {
+                    userinfo.hash = resp;
+                    ref.child(id).update(userinfo);
+                    response.code = 1;
+                    response.message = 'User info updated correctly';
+                    resolve(response);
+                });
+            } else {
+                ref.child(id).update(userinfo);
                 response.code = 1;
-                response.message = 'User info inserted correctly';
+                response.message = 'User info updated correctly';
                 resolve(response);
-            });
+            }
         });
 
         return promise;
