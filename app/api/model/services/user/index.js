@@ -7,8 +7,8 @@ import deleteuser from './deleteuser';
 
 let SecurityService = {};
 
-(() => {
-    SecurityService = { ... getuser, ... saveuser, ... edituser, ... deleteuser };
-})();
+
+SecurityService = { ... getuser, ... saveuser, ... edituser, ... deleteuser };
+
 
 export default SecurityService;

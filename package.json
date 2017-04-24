@@ -42,6 +42,8 @@
     "babel-watch": "^2.0.6",
     "bcrypt": "^1.0.2",
     "code": "^4.0.0",
+    "confidence": "^3.0.2",
+    "glue": "^4.1.0",
     "hapi-auth-basic": "^4.2.0",
     "hapi-auth-cookie": "^7.0.0",
     "hapi-swagger": "^7.7.0",
@@ -50,6 +52,7 @@
     "jshint": "^2.9.4",
     "lab": "^13.0.1",
     "lab-babel": "^1.1.1",
+    "path": "^0.12.7",
     "promise": "^7.1.1",
     "vision": "^4.1.1"
   }

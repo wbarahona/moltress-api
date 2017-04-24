@@ -1,44 +1,35 @@
 /* jshint esversion: 6 */
 
-import config from '../config';
+import conf from '../config';
 import routes from  './routes';
-import Hapi from 'hapi';
-import Vision from 'vision';
-import Inert from 'inert';
-// import Bcrypt from 'bcrypt';
-// import Basic from 'hapi-auth-basic';
-import Cookie from 'hapi-auth-cookie';
-import HapiSwagger from 'hapi-swagger';
+import Glue from 'glue';
 import InitService from './model/services/init';
 import SecurityService from './model/services/security';
-
-let Server = null;
-
-(() => {
 
 //
 // Bootstrap api here
 // ----------------------------------------------------------
-    const { cookieStrategy } = SecurityService;
-    const { init } = InitService;
-    const { cors, plugins } = config;
-    const { swagger } = plugins;
+const { cookieStrategy } = SecurityService;
+const { init } = InitService;
 
-    Server = new Hapi.Server(cors);
+const { manifest } = conf('/');
 
-    Server.connection({
-        host: 'localhost',
-        port: 8001
+const options = {
+    relativeTo: __dirname
+};
+
+Glue.compose(manifest, options, (err, Server) => {
+
+    if (err) {
+        throw err;
+    }
+    Server.auth.strategy('session', 'cookie', true, cookieStrategy);
+    Server.route(routes(Server));
+
+    Server.start(() => {
+
+        console.log('Server started', Server.info.uri);
     });
+});
 
-    Server.register([Vision, Inert, Cookie, { register: HapiSwagger, options: swagger.options }], (err) => {
-        // Server.auth.strategy('simple', 'basic', simpleStrategy);
-        Server.auth.strategy('session', 'cookie', true, cookieStrategy);
-        Server.route(routes(Server));
-        if (err) {console.log(err);}
-    });
-
-    init();
-})();
-
-export default Server;
+init();

@@ -23,7 +23,7 @@
             };
 
             server.inject(options, (response) => {
-                const result = response.result;
+                const { result } = response;
 
                 // Assert that we are fetching the proper endpoint
                 expect(response.statusCode).to.not.be.equal(404);
@@ -51,7 +51,7 @@
             };
 
             server.inject(options, (response) => {
-                const result = response.result;
+                const { result } = response;
 
                 // Assert that we are fetching the proper endpoint
                 expect(response.statusCode).to.not.be.equal(404);

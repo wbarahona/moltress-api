@@ -5,78 +5,73 @@ import AuthService from '../../model/services/auth';
 
 const AuthHandler = {};
 
-(() => {
+AuthHandler.login = (request, reply) => {
+    const { payload } = request;
+    const { email, password } = payload;
+    const { loginemail } = AuthService;
 
+    loginemail(email, password).then((resp) => {
+        const { code, message, content } = resp;
+        const { uid, scope } = content;
+        let statusCode = 500;
 
-    AuthHandler.login = (request, reply) => {
-        const { payload } = request;
-        const { email, password } = payload;
-        const { loginemail } = AuthService;
-
-        loginemail(email, password).then((resp) => {
-            const { code, message, content } = resp;
-            const { uid, scope } = content;
-            let statusCode = 500;
-
-            if (code !== 1) {
-                statusCode = 401;
-            } else {
-                request.cookieAuth.set({id: uid, scope: scope});
-                statusCode = 200;
-            }
-            reply({
-                statusCode: statusCode,
-                code: code,
-                message: message,
-                content: content
-            }).code(statusCode);
-        }, (err) => {
-            reply({
-                statusCode: 500,
-                code: 0,
-                message: 'There was an error on the request for user and password.',
-                content: err
-            }).code(500);
-        });
-    };
-
-    AuthHandler.logout = (request, reply) => {
-        request.cookieAuth.clear();
-
+        if (code !== 1) {
+            statusCode = 401;
+        } else {
+            request.cookieAuth.set({id: uid, scope: scope});
+            statusCode = 200;
+        }
         reply({
-            statusCode: 200,
-            code: 1,
-            message: 'Successfully logged out.',
-            content: {}
-        });
-    };
+            statusCode: statusCode,
+            code: code,
+            message: message,
+            content: content
+        }).code(statusCode);
+    }, (err) => {
+        reply({
+            statusCode: 500,
+            code: 0,
+            message: 'There was an error on the request for user and password.',
+            content: err
+        }).code(500);
+    });
+};
 
-    //
-    // Schemas definition for Auth
-    // -----------------------------------------------------------------
-    AuthHandler.schema = {};
+AuthHandler.logout = (request, reply) => {
+    request.cookieAuth.clear();
 
-    AuthHandler.schema.auth = joi.object().keys({
-        statusCode: joi.number()
-                       .required()
-                       .integer()
-                       .description('This is the response code')
-                       .example(200),
-        code: joi.number()
-                 .required()
-                 .integer()
-                 .description('This is the response code from the service')
-                 .example(0),
-        message: joi.string()
-                    .required()
-                    .description('This is the response message from the service, it shall be passed to the reply')
-                    .example('This request was successful'),
-        content: joi.object()
-                    .required()
-                    .description('This is the response content if needed this contains some useful resource')
-                    .example({name: 'Item1'})
-    }).label('auth');
+    reply({
+        statusCode: 200,
+        code: 1,
+        message: 'Successfully logged out.',
+        content: {}
+    });
+};
 
-})();
+//
+// Schemas definition for Auth
+// -----------------------------------------------------------------
+AuthHandler.schema = {};
+
+AuthHandler.schema.auth = joi.object().keys({
+    statusCode: joi.number()
+                   .required()
+                   .integer()
+                   .description('This is the response code')
+                   .example(200),
+    code: joi.number()
+             .required()
+             .integer()
+             .description('This is the response code from the service')
+             .example(0),
+    message: joi.string()
+                .required()
+                .description('This is the response message from the service, it shall be passed to the reply')
+                .example('This request was successful'),
+    content: joi.object()
+                .required()
+                .description('This is the response content if needed this contains some useful resource')
+                .example({name: 'Item1'})
+}).label('auth');
 
 export default AuthHandler;

@@ -5,8 +5,6 @@ import encrypt from './encrypt';
 
 let SecurityService = {};
 
-(() => {
-    SecurityService = { ... simple, ... encrypt };
-})();
+SecurityService = { ... simple, ... encrypt };
 
 export default SecurityService;

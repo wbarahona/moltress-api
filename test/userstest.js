@@ -23,7 +23,7 @@
             };
 
             server.inject(options, (response) => {
-                const result = response.result;
+                const { result } = response;
 
                 // Assert that we are fetching the proper endpoint
                 expect(response.statusCode).to.not.be.equal(404);
@@ -46,13 +46,16 @@
                 method: 'POST',
                 url: '/api/v1/user/',
                 payload: {
+                    active: false,
+                    age: 23,
+                    code: '1324567890ABCDEF',
                     fname: 'fname',
                     lname: 'lname',
                     dob: '1489881121232',
                     email: 'email@metalocalypse.us',
-                    username: 'username',
                     password: 'password',
-                    scope: 'scope'
+                    scope: 'scope',
+                    uid: '1324567890ABCDEF'
                 },
                 credentials: {
                     scope: 'user'
@@ -60,7 +63,7 @@
             };
 
             server.inject(options, (response) => {
-                const result = response.result;
+                const { result } = response;
 
                 // Assert that we are fetching the proper endpoint
                 expect(response.statusCode).to.not.be.equal(404);

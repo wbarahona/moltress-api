@@ -6,10 +6,8 @@ import authcontroller from './authcontroller';
 
 const Controllers = {};
 
-(() => {
-    Controllers.usercontroller = usercontroller;
-    Controllers.itemcontroller = itemcontroller;
-    Controllers.authcontroller = authcontroller;
-})();
+Controllers.usercontroller = usercontroller;
+Controllers.itemcontroller = itemcontroller;
+Controllers.authcontroller = authcontroller;
 
 export default Controllers;

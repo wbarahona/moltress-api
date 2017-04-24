@@ -6,20 +6,18 @@ const ThisModule = {};
 const saltRounds = 10;
 
 
-(() => {
-    //
-    // Encrypt plaintext
-    // -----------------------------------------------------------
-    ThisModule.hash = (plaintext) => {
-        return Bcrypt.hash(plaintext, saltRounds);
-    };
+//
+// Encrypt plaintext
+// -----------------------------------------------------------
+ThisModule.hash = (plaintext) => {
+    return Bcrypt.hash(plaintext, saltRounds);
+};
 
-    //
-    // Compare passwords
-    // -----------------------------------------------------------
-    ThisModule.compare = (str1, hash) => {
-        return Bcrypt.compare(str1, hash);
-    };
-})();
+//
+// Compare passwords
+// -----------------------------------------------------------
+ThisModule.compare = (str1, hash) => {
+    return Bcrypt.compare(str1, hash);
+};
 
 export default ThisModule;

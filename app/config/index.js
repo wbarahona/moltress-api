@@ -1,34 +1,60 @@
 /* jshint esversion: 6 */
 
+import confidence from 'confidence';
 import paths from './paths.ini';
 import pack from '../../package';
-
-const api = {};
-
-(() => {
 
 //
 // API configuration and global vars
 // ------------------------------------------------------------------------
-    api.paths  = paths;
-    api.globalVars = {};
-    api.cors = {
-        connections: {
-            routes: {
-                cors: true
+// TODO: implement a cache method
+const conf = {
+    paths: paths,
+    env: process.env.NODE_ENV || 'dev',
+    manifest: {
+        server: {
+            cache: false
+        },
+        connections: [
+            // {
+            //     port: 8000,
+            //     labels: ['web']
+            // },
+            {
+                port: 8001,
+                labels: ['admin']
             }
-        }
-    };
-    api.plugins = {};
-    api.plugins.swagger = {};
-    api.plugins.swagger.options = {
-        info: {
-            'title': 'API Documentation',
-            'version': pack.version
-        }
-    };
-    api.references = {};
-    api.references.users = 'firedata/users';
-})();
+        ],
+        registrations: [
+            { plugin: 'vision' },
+            { plugin: 'inert' },
+            { plugin: 'hapi-auth-cookie' },
+            {
+                plugin: {
+                    register: 'hapi-swagger',
+                    options: {
+                        info: {
+                            'title': 'API Documentation',
+                            'version': pack.version
+                        }
+                    }
+                },
+            }
+        ]
+    },
+    firebase: {
+        root: 'https://hndelivery.firebaseio.com',
+        users: 'firedata/users'
+    }
+};
 
-export default api;
+conf.store = new confidence.Store(conf);
+
+const get = (key, opts = {}) => {
+
+    const criteria = { ... conf, ... opts };
+
+    return conf.store.get(key, criteria);
+};
+
+export default get;
