@@ -22,11 +22,12 @@ paths.model = {};
 paths.model.root = `${ paths.app.api }/model`;
 paths.services = {};
 paths.services.root  = `${ paths.model.root }/services`;
-paths.services.users = `${ paths.services.root }/users`;
+paths.services.users = `${ paths.services.root }/user`;
+paths.services.items = `${ paths.services.root }/item`;
 
 // ROUTES
 paths.routes = {};
 paths.routes.root = `${ paths.app.api }/routes`;
-paths.routes.users = `${ paths.routes.root }/users`;
+paths.routes.users = `${ paths.routes.root }/user`;
 
 export default paths;

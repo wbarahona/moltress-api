@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
 import joi from 'joi';
-import AuthService from '../../model/services/auth';
+import AuthService from '../model/services/auth';
 
 const AuthHandler = {};
 
@@ -28,11 +28,13 @@ AuthHandler.login = (request, reply) => {
             content: content
         }).code(statusCode);
     }, (err) => {
+        const { code, message, content } = err;
+
         reply({
             statusCode: 500,
-            code: 0,
-            message: 'There was an error on the request for user and password.',
-            content: err
+            code: code,
+            message: message,
+            content: content
         }).code(500);
     });
 };

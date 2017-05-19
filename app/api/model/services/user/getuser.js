@@ -18,29 +18,26 @@ const response = {
 ThisModule.getuser = (uid) => {
     const db = Firebase.database();
     const ref = db.ref(usersRef);
-    let userinfo = null;
 
     const promise = new Promise((resolve, reject) => {
-        ref.on('value', (snapshot) => {
-            const itemsCollection = snapshot.val();
+        ref.orderByChild('uid').equalTo(uid).once('value', (snapshot) => {
+            let userinfo = snapshot.val();
 
-            for (const id in itemsCollection) {
-                if (itemsCollection.hasOwnProperty(id)) {
-                    userinfo = itemsCollection[id];
-                    if (userinfo.uid === uid) {
-                        response.code = 1;
-                        response.message = `fetched info searching by id: ${ uid }`;
-                        response.content = userinfo;
-                    }
-                }
+            // console.log(userinfo);
+
+            if (userinfo) {
+                userinfo = userinfo[Object.keys(userinfo)[0]];
+                delete userinfo.password;
+                response.code = 1;
+                response.message = `User by uid: ${ uid }, was found. `;
+                response.content = userinfo;
+                resolve(response);
+            } else {
+                response.code = 0;
+                response.message = `User by uid: ${ uid }, was not found. `;
+                reject(response);
             }
-
-            if (response.code !== 1) {
-                response.message = `User by id: ${ uid }, was not found. `;
-            }
-
-            resolve(response);
-        }, (err) => {
+        }).catch((err) => {
             response.code = 0;
             response.message = 'There is a error finding users';
             response.content = err;
@@ -56,32 +53,33 @@ ThisModule.getuser = (uid) => {
 // get user info by email
 // --------------------------------------------------------
 ThisModule.getuserbyemail = (email) => {
-    const promise = new Promise((resolve) => {
+    const promise = new Promise((resolve, reject) => {
         const db = Firebase.database();
         const ref = db.ref(usersRef);
 
-        ref.on('value', (snapshot) => {
-            const itemsCollection = snapshot.val();
+        ref.orderByChild('email').equalTo(email).once('value', (snapshot) => {
+            let userinfo = snapshot.val();
 
-            for (const userid in itemsCollection) {
-                if (itemsCollection.hasOwnProperty(userid)) {
-                    const userinfo = itemsCollection[userid];
-
-                    if (userinfo.email === email && userinfo.active) {
-                        // remove password key
-                        delete userinfo.password;
-                        response.code = 1;
-                        response.message = `User by email: ${ email }, was found. `;
-                        response.content = userinfo;
-                    }
-                }
-            }
-
-            if (response.code !== 1) {
+            if (userinfo) {
+                userinfo = userinfo[Object.keys(userinfo)[0]];
+                delete userinfo.password;
+                response.code = 1;
+                response.message = `User by email: ${ email }, was found. `;
+                response.content = userinfo;
+                resolve(response);
+            } else {
+                response.code = 0;
                 response.message = `User by email: ${ email }, was not found. `;
+                reject(response);
             }
+        }).catch((err) => {
+            // console.log(err);
 
-            resolve(response);
+            response.code = 0;
+            response.message = `User by email: ${ email }, was not found. `;
+            response.content = err;
+
+            reject(response);
         });
     });
 

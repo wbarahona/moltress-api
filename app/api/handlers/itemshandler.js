@@ -1,19 +1,33 @@
 /* jshint esversion: 6 */
 
 import joi from 'joi';
+import ItemsService from '../model/services/item';
 
 const ItemsHandler = {};
 
 ItemsHandler.all = (request, reply) => {
-    const { params, query } = request;
-    const { limit } = query;
+    const { query } = request;
+    const { from, limit } = query;
 
-    reply({
-        statusCode: 200,
-        code: 1,
-        message: `items api requested all items, limited by ${ limit } results, params obj was: ${ params }`,
-        content: [{item: 'item1'}]
-    }).code(200);
+    ItemsService.getitems(from, limit).then((res) => {
+        const { code, message, content } = res;
+
+        reply({
+            statusCode: 200,
+            code: code,
+            message: message,
+            content: content
+        }).code(200);
+    }, (err) => {
+        const { code, message, content } = err;
+
+        reply({
+            statusCode: 500,
+            code: code,
+            message: message,
+            content: content
+        }).code(500);
+    });
 };
 
 ItemsHandler.getitembyid = (request, reply) => {
@@ -32,12 +46,25 @@ ItemsHandler.getitembyname = (request, reply) => {
     const { params } = request;
     const { name } = params;
 
-    reply({
-        statusCode: 200,
-        code: 1,
-        message: `items api requested by name: ${ name }`,
-        content: {item: 'item1'}
-    }).code(200);
+    ItemsService.getitembyname(name).then((res) => {
+        const { code, message, content } = res;
+
+        reply({
+            statusCode: 200,
+            code: code,
+            message: message,
+            content: content
+        }).code(200);
+    }, (err) => {
+        const { code, message, content } = err;
+
+        reply({
+            statusCode: 500,
+            code: code,
+            message: message,
+            content: content
+        }).code(500);
+    });
 };
 
 //

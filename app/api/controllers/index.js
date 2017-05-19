@@ -1,13 +1,16 @@
 /* jshint esversion: 6 */
 
-import usercontroller from './usercontroller';
-import itemcontroller from './itemcontroller';
-import authcontroller from './authcontroller';
+import Path from 'path';
+import Fs from 'fs';
 
 const Controllers = {};
 
-Controllers.usercontroller = usercontroller;
-Controllers.itemcontroller = itemcontroller;
-Controllers.authcontroller = authcontroller;
+Fs.readdirSync(__dirname).forEach((file) => {
+    const controllerName = Path.basename(file, '.js');
+
+    if (controllerName !== 'index') {
+        Controllers[controllerName] = require(Path.join(__dirname, file)).default;
+    }
+});
 
 export default Controllers;

@@ -1,10 +1,23 @@
 /* jshint esversion: 6 */
 
-import simple from './simple';
-import encrypt from './encrypt';
+import Path from 'path';
+import Fs from 'fs';
 
-let SecurityService = {};
+const SecurityService = {};
+let serviceMethods = {};
 
-SecurityService = { ... simple, ... encrypt };
+Fs.readdirSync(__dirname).forEach((file) => {
+    const serviceName = Path.basename(file, '.js');
+
+    if (serviceName !== 'index') {
+        serviceMethods = require(Path.join(__dirname, file)).default;
+
+        for (const methodName in serviceMethods) {
+            if (serviceMethods.hasOwnProperty(methodName)) {
+                SecurityService[methodName] = serviceMethods[methodName];
+            }
+        }
+    }
+});
 
 export default SecurityService;

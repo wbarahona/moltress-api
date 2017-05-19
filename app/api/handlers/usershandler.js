@@ -1,7 +1,7 @@
 /* jshint esversion: 6 */
 
 import joi from 'joi';
-import UsersService from '../../model/services/user';
+import UsersService from '../model/services/user';
 
 const UsersHandler = {};
 

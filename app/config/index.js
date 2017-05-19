@@ -21,6 +21,7 @@ const conf = {
             //     labels: ['web']
             // },
             {
+                host: 'localhost',
                 port: 8001,
                 labels: ['admin']
             }
@@ -38,13 +39,14 @@ const conf = {
                             'version': pack.version
                         }
                     }
-                },
+                }
             }
         ]
     },
     firebase: {
         root: 'https://hndelivery.firebaseio.com',
-        users: 'firedata/users'
+        users: 'firedata/users',
+        items: 'firedata/client_data/groceries/items'
     }
 };
 

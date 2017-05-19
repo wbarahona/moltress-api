@@ -1,24 +1,23 @@
 /* jshint esversion: 6 */
 
-import controllers from '../controllers';
+// import controllers from '../controllers';
+import Path from 'path';
+import Fs from 'fs';
 
 let RoutesModule = null;
+let Routes = [];
+let Route = null;
 
-const { usercontroller, itemcontroller, authcontroller } = controllers;
+Fs.readdirSync(__dirname).forEach((file) => {
+    const routeName = Path.basename(file, '.js');
 
-const { getuserbyid, saveuser, edituser, deleteuser } = usercontroller;
-const { getitems, getitembyname } = itemcontroller;
-const { login, logout } = authcontroller;
+    if (routeName !== 'index') {
+        Route = require(Path.join(__dirname, file)).default;
 
-RoutesModule = () => [
-    getuserbyid,
-    saveuser,
-    edituser,
-    deleteuser,
-    getitems,
-    getitembyname,
-    login,
-    logout
-];
+        Routes = Routes.concat(Route);
+    }
+});
+
+RoutesModule = () => Routes;
 
 export default RoutesModule;

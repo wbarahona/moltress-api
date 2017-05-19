@@ -3,7 +3,7 @@
 import Path from 'path';
 import Fs from 'fs';
 
-const AuthService = {};
+const ItemService = {};
 let serviceMethods = {};
 
 Fs.readdirSync(__dirname).forEach((file) => {
@@ -14,10 +14,10 @@ Fs.readdirSync(__dirname).forEach((file) => {
 
         for (const methodName in serviceMethods) {
             if (serviceMethods.hasOwnProperty(methodName)) {
-                AuthService[methodName] = serviceMethods[methodName];
+                ItemService[methodName] = serviceMethods[methodName];
             }
         }
     }
 });
 
-export default AuthService;
+export default ItemService;

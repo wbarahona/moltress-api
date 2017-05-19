@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-import conf from '../config';
+
 import routes from  './routes';
 import Glue from 'glue';
 import InitService from './model/services/init';
@@ -10,26 +10,24 @@ import SecurityService from './model/services/security';
 // Bootstrap api here
 // ----------------------------------------------------------
 const { cookieStrategy } = SecurityService;
-const { init } = InitService;
+const { init, getApp } = InitService;
 
-const { manifest } = conf('/');
+exports.init = (manifest, options, cb) => {
+    Glue.compose(manifest, options, (err, Server) => {
 
-const options = {
-    relativeTo: __dirname
-};
+        if (err) {
+            throw err;
+        }
+        Server.auth.strategy('session', 'cookie', true, cookieStrategy);
+        Server.route(routes(Server));
 
-Glue.compose(manifest, options, (err, Server) => {
+        Server.start((_err) => {
 
-    if (err) {
-        throw err;
-    }
-    Server.auth.strategy('session', 'cookie', true, cookieStrategy);
-    Server.route(routes(Server));
-
-    Server.start(() => {
-
-        console.log('Server started', Server.info.uri);
+            cb(_err, Server);
+        });
     });
-});
 
-init();
+    if (!getApp()) {
+        init();
+    }
+};
