@@ -1,8 +1,8 @@
 /* jshint esversion: 6 */
 
 import Promise from 'promise';
-import SecurityService from '../security';
-import UserService from '../user';
+import SecurityService from './security';
+import UserService from './user';
 
 const ThisModule = {};
 const response = {

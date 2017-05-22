@@ -2,7 +2,7 @@
 
 import Promise from 'promise';
 import * as Firebase from 'firebase-admin';
-import config from '../../../../config';
+import config from '~/app/config';
 
 const ThisModule = {};
 const itemsRef = config('/firebase/items');
@@ -114,6 +114,41 @@ ThisModule.getitembyname = (name) => {
             response.message = 'There is a error finding items';
             response.content = err;
 
+            reject(response);
+        });
+    });
+
+    return promise;
+};
+
+//
+// Delete item to firebase
+// --------------------------------------------------------
+ThisModule.deleteitem = (id) => {
+    const db = Firebase.database();
+    const ref = db.ref(itemsRef);
+
+    const promise = new Promise((resolve, reject) => {
+        const { getitembyid } = ThisModule;
+
+        getitembyid(id).then((resp) => {
+            const { code, content } = resp;
+            const { active } = content;
+
+            if (code === 1 && active) {
+                ref.child(id).remove();
+                response.code = 1;
+                response.message = 'Item was removed correctly.';
+            } else {
+                response.code = 0;
+                response.message = 'Item to be deleted is not active or not found.';
+            }
+            resolve(response);
+        }, (err) => {
+            ref.child(id).remove();
+            response.code = 1;
+            response.message = 'Request was rejected.';
+            response.content = err;
             reject(response);
         });
     });

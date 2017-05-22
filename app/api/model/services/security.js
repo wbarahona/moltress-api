@@ -3,7 +3,7 @@
 import Bcrypt from 'bcrypt';
 
 const ThisModule = {};
-
+const saltRounds = 10;
 const users = [
     {
         username: 'john',
@@ -20,7 +20,6 @@ const users = [
         scope: 'user'
     }
 ];
-
 const validate = (request, username, password, callback) => {
     const user = users[username];
 
@@ -43,6 +42,20 @@ ThisModule.cookieStrategy = {
     cookie: 'app-cookie', // Cookie name
     isSecure: false, // required for non-https applications
     ttl: 24 * 60 * 60 * 1000
+};
+
+//
+// Encrypt plaintext
+// -----------------------------------------------------------
+ThisModule.hash = (plaintext) => {
+    return Bcrypt.hash(plaintext, saltRounds);
+};
+
+//
+// Compare passwords
+// -----------------------------------------------------------
+ThisModule.compare = (str1, hash) => {
+    return Bcrypt.compare(str1, hash);
 };
 
 export default ThisModule;
