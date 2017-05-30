@@ -76,6 +76,7 @@ ThisModule.saveuser = {
                     .example('1489881121232'),
             scope: joi.string()
                       // .valid(authService.scopes)
+                      .example('user')
                       .description('User\'s scope'),
             uid: joi.string()
                     .required()
@@ -86,10 +87,7 @@ ThisModule.saveuser = {
     response: {
         schema: usershandler.schema.user
     },
-    auth: {
-        strategy: 'session',
-        scope: 'user' // or [‘user’,’admin’]
-    }
+    auth: false
 };
 
 ThisModule.edituser = {

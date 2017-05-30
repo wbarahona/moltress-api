@@ -43,4 +43,24 @@ ThisModule.logout = {
     auth: false
 };
 
+ThisModule.passwordrecovery = {
+    handler: authentichandler.passwordrecovery,
+    description: 'Password reset method for users',
+    notes: 'Allows the user to reset his password, generates a temporal hash and emails it',
+    tags: ['api', 'password', 'reset', 'user'],
+    validate: {
+        payload: {
+            email: joi.string()
+                      .email()
+                      .required()
+                      .description('User\'s email')
+                      .example('nathanexplosion@dethklok.com')
+        }
+    },
+    response: {
+        schema: authentichandler.schema.authentichandler
+    },
+    auth: false
+};
+
 export default ThisModule;

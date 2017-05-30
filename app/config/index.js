@@ -2,12 +2,28 @@
 
 import confidence from 'confidence';
 import paths from './paths.ini';
-import pack from '../../package';
+import pack from '~/package';
+import email from './credentials/emailCredentials';
 
 //
 // API configuration and global vars
 // ------------------------------------------------------------------------
 // TODO: implement a cache method
+
+// ------------------------------------------------------------------------
+// NOTE: email was sent to a unfindable file for reasons, but follow this
+// structure below in the emailCredentials.json
+// {
+//   "clients": {
+//     "server1": {
+//       "username": "your.email@server1.com",
+//       "password": "somepassword",
+//       "name": "server1"
+//     }
+//   }
+// }
+// ------------------------------------------------------------------------
+
 const conf = {
     paths: paths,
     env: process.env.NODE_ENV || 'dev',
@@ -43,6 +59,8 @@ const conf = {
             }
         ]
     },
+    mail: email,
+    appname: pack.name,
     firebase: {
         root: 'https://hndelivery.firebaseio.com',
         users: 'firedata/users',

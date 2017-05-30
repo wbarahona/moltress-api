@@ -16,6 +16,12 @@ ThisModule = [
         method: 'POST',
         path: '/api/v1/logout/',
         config: authcontroller.logout
+    },
+    {
+        // Get new temporal password
+        method: 'POST',
+        path: '/api/v1/password-recovery/',
+        config: authcontroller.passwordrecovery
     }
 ];
 

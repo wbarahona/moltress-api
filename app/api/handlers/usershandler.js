@@ -58,6 +58,7 @@ UsersHandler.saveuser = (request, reply) => {
                     email: email,
                     fname: fname,
                     hash: hash,
+                    hasrequestedpwd: false,
                     lname: lname,
                     password: password,
                     role: role,
@@ -100,6 +101,7 @@ UsersHandler.edituser = (request, reply) => {
                     hash: hash,
                     lname: lname,
                     password: password,
+                    hasrequestedpwd: false,
                     role: role,
                     scope: scope,
                     uid: uid

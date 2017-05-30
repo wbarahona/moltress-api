@@ -44,6 +44,17 @@ ThisModule.cookieStrategy = {
     ttl: 24 * 60 * 60 * 1000
 };
 
+ThisModule.makerandom = () => {
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let text = '';
+
+    for (let i = 0; i < 15; i++ ) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return text;
+};
+
 //
 // Encrypt plaintext
 // -----------------------------------------------------------

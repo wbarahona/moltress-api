@@ -50,6 +50,32 @@ AuthHandler.logout = (request, reply) => {
     });
 };
 
+AuthHandler.passwordrecovery = (request, reply) => {
+    const { payload } = request;
+    const { email } = payload;
+    const { passwordreset } = AuthService;
+
+    passwordreset(email).then((resp) => {
+        const { code, message, content } = resp;
+
+        reply({
+            statusCode: 200,
+            code: code,
+            message: message,
+            content: content
+        });
+    }, (err) => {
+        const { code, message, content } = err;
+
+        reply({
+            statusCode: 500,
+            code: code,
+            message: message,
+            content: content
+        });
+    });
+};
+
 //
 // Schemas definition for Auth
 // -----------------------------------------------------------------
