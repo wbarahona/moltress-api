@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import handlers from '../handlers';
 import joi from 'joi';
 
@@ -15,18 +13,22 @@ ThisModule.getuserbyid = {
     validate: {
         params: {
             id: joi.string()
-                   .required()
-                   .description('User id to search for')
-                   .example('ABC1234567890')
-        }
+                .required()
+                .description('User id to search for')
+                .example('ABC1234567890')
+        },
+        headers: joi.object({
+            'authorization': joi.string().required()
+        }).unknown()
     },
     response: {
         schema: usershandler.schema.user
     },
-    auth: {
-        strategy: 'session',
-        scope: 'user' // or [‘user’,’admin’]
-    }
+    auth: 'bearer'
+    // auth: {
+    //     strategy: 'bearer',
+    //     scope: 'user' // or [‘user’,’admin’]
+    // }
 };
 
 ThisModule.saveuser = {
@@ -37,57 +39,71 @@ ThisModule.saveuser = {
     validate: {
         payload: {
             active: joi.boolean()
-                       .required()
-                       .description('User is active? true / false')
-                       .example(false),
+                .required()
+                .description('User is active? true / false')
+                .example(false),
             age: joi.number()
-                    .min(18)
-                    .max(100)
-                    .required()
-                    .description('User\'s age')
-                    .example(20),
+                .min(18)
+                .max(100)
+                .required()
+                .description('User\'s age')
+                .example(20),
+            agree: joi.boolean()
+                .required()
+                .description('User have agreeded terms of use')
+                .example(false),
             code: joi.string()
-                     .required()
-                     .description('Firebase\'s UID for the user registered using their api')
-                     .example('92222fd1-c3a1-4d5d-bb1c-f029b339138e'),
+                .required()
+                .description('Firebase\'s UID for the user registered using their api')
+                .example('92222fd1-c3a1-4d5d-bb1c-f029b339138e'),
+            dateregister: joi.string()
+                .required()
+                .description('User\'s date when registered')
+                .example('Wed Jun 07 2017 07:37:09 GMT-0600 (CST)'),
             email: joi.string()
-                      .required()
-                      .email()
-                      .description('User\'s email')
-                      .example('nathanexplosion@dethklok.com'),
+                .required()
+                .email()
+                .description('User\'s email')
+                .example('nathanexplosion@dethklok.com'),
             fname: joi.string()
-                      .required()
-                      .description('User\'s first name')
-                      .example('Nathan'),
+                .required()
+                .description('User\'s first name')
+                .example('Nathan'),
+            hasrequestedpwd: joi.boolean()
+                .description('Has requested new password')
+                .example(false),
             lname: joi.string()
-                      .required()
-                      .description('User\'s last name')
-                      .example('Explosion'),
+                .required()
+                .description('User\'s last name')
+                .example('Explosion'),
             password: joi.string()
-                         .required()
-                         .min(6)
-                         .max(25)
-                         .description('User\'s password to login')
-                         .example('**********'),
+                .required()
+                .min(6)
+                .max(25)
+                .description('User\'s password to login')
+                .example('**********'),
             dob: joi.date()
-                    .timestamp()
-                    .required()
-                    .description('User\'s date of birth in javascript format')
-                    .example('1489881121232'),
+                .timestamp()
+                .required()
+                .description('User\'s date of birth in javascript format ms')
+                .example('1489881121232'),
             scope: joi.string()
-                      // .valid(authService.scopes)
-                      .example('user')
-                      .description('User\'s scope'),
+                // .valid(authService.scopes)
+                .example('user')
+                .description('User\'s scope'),
             uid: joi.string()
-                    .required()
-                    .description('Firebase\'s UID for the user registered using their api')
-                    .example('92222fd1-c3a1-4d5d-bb1c-f029b339138e')
-        }
+                .required()
+                .description('Firebase\'s UID for the user registered using their api')
+                .example('92222fd1-c3a1-4d5d-bb1c-f029b339138e')
+        },
+        headers: joi.object({
+            'authorization': joi.string().required()
+        }).unknown()
     },
     response: {
         schema: usershandler.schema.user
     },
-    auth: false
+    auth: 'bearer'
 };
 
 ThisModule.edituser = {
@@ -98,52 +114,72 @@ ThisModule.edituser = {
     validate: {
         params: {
             id: joi.string()
-                   .description('User id to edit')
-                   .example('ABC1234567890')
+                .description('User id to edit')
+                .example('ABC1234567890')
         },
         payload: {
             active: joi.boolean()
-                       .description('User is active? true / false')
-                       .example(false),
+                .description('User is active? true / false')
+                .example(false),
             age: joi.number()
-                    .min(18)
-                    .max(100)
-                    .description('User\'s age')
-                    .example(20),
+                .min(18)
+                .max(100)
+                .description('User\'s age')
+                .example(20),
+            agree: joi.boolean()
+                .required()
+                .description('User have agreeded terms of use')
+                .example(false),
             code: joi.string()
-                     .description('Firebase\'s UID for the user registered using their api')
-                     .example('92222fd1-c3a1-4d5d-bb1c-f029b339138e'),
+                .required()
+                .description('Firebase\'s UID for the user registered using their api')
+                .example('92222fd1-c3a1-4d5d-bb1c-f029b339138e'),
+            dateregister: joi.string()
+                .required()
+                .description('User\'s date when registered')
+                .example('Wed Jun 07 2017 07:37:09 GMT-0600 (CST)'),
             email: joi.string()
-                      .email()
-                      .description('User\'s email')
-                      .example('nathanexplosion@dethklok.com'),
+                .email()
+                .description('User\'s email')
+                .example('nathanexplosion@dethklok.com'),
             fname: joi.string()
-                      .description('User\'s first name')
-                      .example('Nathan'),
+                .description('User\'s first name')
+                .example('Nathan'),
+            hasrequestedpwd: joi.boolean()
+                .description('Has requested new password')
+                .example(false),
             lname: joi.string()
-                      .description('User\'s last name')
-                      .example('Explosion'),
+                .description('User\'s last name')
+                .example('Explosion'),
             password: joi.string()
-                         .min(6)
-                         .max(25)
-                         .description('User\'s password to login')
-                         .example('**********'),
+                .min(6)
+                .max(25)
+                .description('User\'s password to login')
+                .example('**********'),
             dob: joi.date()
-                    .timestamp()
-                    .description('User\'s date of birth in javascript format')
-                    .example('1489881121232'),
+                .timestamp()
+                .description('User\'s date of birth in javascript format ms')
+                .example('1489881121232'),
             scope: joi.string()
-                      // .valid(authService.scopes)
-                      .description('User\'s scope')
-        }
+                // .valid(authService.scopes)
+                .description('User\'s scope'),
+            uid: joi.string()
+                .required()
+                .description('Firebase\'s UID for the user registered using their api')
+                .example('92222fd1-c3a1-4d5d-bb1c-f029b339138e')
+        },
+        headers: joi.object({
+            'authorization': joi.string().required()
+        }).unknown()
     },
     response: {
         schema: usershandler.schema.user
     },
-    auth: {
-        strategy: 'session',
-        scope: 'user' // or [‘user’,’admin’]
-    }
+    auth: 'bearer'
+    // auth: {
+    //     strategy: 'session',
+    //     scope: 'user' // or [‘user’,’admin’]
+    // }
 };
 
 ThisModule.deleteuser = {
@@ -154,17 +190,21 @@ ThisModule.deleteuser = {
     validate: {
         params: {
             id: joi.string()
-                   .description('User id to delete')
-                   .example('ABC1234567890')
-        }
+                .description('User id to delete')
+                .example('ABC1234567890')
+        },
+        headers: joi.object({
+            'authorization': joi.string().required()
+        }).unknown()
     },
     response: {
         schema: usershandler.schema.user
     },
-    auth: {
-        strategy: 'session',
-        scope: 'user' // or [‘user’,’admin’]
-    }
+    auth: 'bearer'
+    // auth: {
+    //     strategy: 'session',
+    //     scope: 'user' // or [‘user’,’admin’]
+    // }
 };
 
 export default ThisModule;

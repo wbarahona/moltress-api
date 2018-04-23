@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import Path from 'path';
 import Fs from 'fs';
 

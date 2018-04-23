@@ -1,70 +1,82 @@
-/* jshint esversion: 6 */
-
 import joi from 'joi';
 import ItemsService from '../model/services/item';
 
 const ItemsHandler = {};
+let statusCode = 500;
+let code = 0;
+let message = '';
+let content = {};
 
-ItemsHandler.all = (request, reply) => {
+ItemsHandler.all = async (request, h) => {
     const { query } = request;
     const { from, limit } = query;
 
-    ItemsService.getitems(from, limit).then((res) => {
-        const { code, message, content } = res;
+    try {
+        const itemsResponse = await ItemsService.getitems(from, limit);
 
-        reply({
-            statusCode: 200,
-            code: code,
-            message: message,
-            content: content
-        }).code(200);
-    }, (err) => {
-        const { code, message, content } = err;
+        statusCode = (code === 1) ? 200 : 500;
+        code = itemsResponse.code;
+        message = itemsResponse.message;
+        content = itemsResponse.content;
+    } catch(err) {
+        message = 'Items handler "all" operation was unsuccessful';
+        content = err;
+    }
 
-        reply({
-            statusCode: 500,
-            code: code,
-            message: message,
-            content: content
-        }).code(500);
-    });
+    return h.response({
+        statusCode,
+        code,
+        message,
+        content
+    }).code(statusCode);
 };
 
-ItemsHandler.getitembyid = (request, reply) => {
+ItemsHandler.getitembyid = async (request, h) => {
     const { params } = request;
     const { id } = params;
 
-    reply({
-        statusCode: 200,
-        code: 1,
-        message: `items api requested by id: ${ id }`,
-        content: {item: 'item1'}
-    }).code(200);
+    try {
+        const itemsResponse = await ItemsService.getitembyid(id);
+
+        statusCode = (code === 1) ? 200 : 500;
+        code = itemsResponse.code;
+        message = itemsResponse.message;
+        content = itemsResponse.content;
+    } catch(err) {
+        message = 'Items handler "getitembyid" operation was unsuccessful';
+        content = err;
+    }
+
+    return h.response({
+        statusCode,
+        code,
+        message,
+        content
+    }).code(statusCode);
 };
 
-ItemsHandler.getitembyname = (request, reply) => {
+ItemsHandler.getitembyname = async (request, h) => {
     const { params } = request;
     const { name } = params;
 
-    ItemsService.getitembyname(name).then((res) => {
-        const { code, message, content } = res;
+    try {
+        const itemsResponse = await ItemsService.getitembyname(name);
 
-        reply({
-            statusCode: 200,
-            code: code,
-            message: message,
-            content: content
-        }).code(200);
-    }, (err) => {
-        const { code, message, content } = err;
+        statusCode = (itemsResponse.code === 1) ? 200 : 500;
+        code = itemsResponse.code;
+        message = itemsResponse.message;
+        content = itemsResponse.content;
+    } catch(err) {
+        message = 'Items handler "getitembyname" operation was unsuccessful';
+        content = err;
+    }
 
-        reply({
-            statusCode: 500,
-            code: code,
-            message: message,
-            content: content
-        }).code(500);
-    });
+    return h.response({
+        statusCode,
+        code,
+        message,
+        content
+    }).code(statusCode);
 };
 
 //
@@ -73,45 +85,69 @@ ItemsHandler.getitembyname = (request, reply) => {
 ItemsHandler.schema = {};
 ItemsHandler.schema.items = joi.object().keys({
     statusCode: joi.number()
-                   .required()
-                   .integer()
-                   .description('This is the response code')
-                   .example(200),
+        .required()
+        .integer()
+        .description('This is the response code')
+        .example(200),
     code: joi.number()
-             .required()
-             .integer()
-             .description('This is the response code from the service')
-             .example(0),
+        .required()
+        .integer()
+        .description('This is the response code from the service')
+        .example(0),
     message: joi.string()
-                .required()
-                .description('This is the response message from the service, it shall be passed to the reply')
-                .example('This request was successful'),
+        .required()
+        .description('This is the response message from the service, it shall be passed to the reply')
+        .example('This request was successful'),
     content: joi.array()
-                .required()
-                .items(joi.object())
-                .description('This is the response content, this holds the array of items')
-                .example([{name: 'Item1'}, {name: 'Item2'}])
+        .required()
+        .items(joi.object())
+        .description('This is the response content, this holds the array of items')
+        .example([{name: 'Item1'}, {name: 'Item2'}])
 }).label('items');
 
 ItemsHandler.schema.item = joi.object().keys({
     statusCode: joi.number()
-                    .required()
-                    .integer()
-                    .description('This is the response code')
-                    .example(200),
+        .required()
+        .integer()
+        .description('This is the response code')
+        .example(200),
     code: joi.number()
-             .required()
-             .integer()
-             .description('This is the response code from the service')
-             .example(0),
+        .required()
+        .integer()
+        .description('This is the response code from the service')
+        .example(0),
     message: joi.string()
-                .required()
-                .description('This is the response message from the service, it shall be passed to the reply')
-                .example('This request was successful'),
+        .required()
+        .description('This is the response message from the service, it shall be passed to the reply')
+        .example('This request was successful'),
     content: joi.object()
-                .required()
-                .description('This is the response content, this holds an object with the item properties')
-                .example({name: 'Item1'})
+        .required()
+        .description('This is the response content, this holds an object with the item properties')
+        .example({name: 'Item1'})
+}).label('item');
+
+//
+// Schemas definition for Category
+// -----------------------------------------------------------------
+ItemsHandler.schema.category = joi.object().keys({
+    statusCode: joi.number()
+        .required()
+        .integer()
+        .description('This is the response code')
+        .example(200),
+    code: joi.number()
+        .required()
+        .integer()
+        .description('This is the response code from the service')
+        .example(0),
+    message: joi.string()
+        .required()
+        .description('This is the response message from the service, it shall be passed to the reply')
+        .example('This request was successful'),
+    content: joi.object()
+        .required()
+        .description('This is the response content, this holds an object with the item properties')
+        .example({name: 'category1'})
 }).label('item');
 
 export default ItemsHandler;

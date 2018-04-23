@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import itemcontroller from '../controllers/itemcontroller';
 
 let ThisModule = [];

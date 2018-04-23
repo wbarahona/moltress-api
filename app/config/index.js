@@ -1,9 +1,9 @@
-/* jshint esversion: 6 */
-
 import confidence from 'confidence';
 import paths from './paths.ini';
-import pack from '~/package';
+import pack from '../../package';
 import email from './credentials/emailCredentials';
+import serviceAccountKey from './credentials/serviceAccountKey';
+import cookieStrategy from './credentials/cookieStrategy';
 
 //
 // API configuration and global vars
@@ -29,43 +29,56 @@ const conf = {
     env: process.env.NODE_ENV || 'dev',
     manifest: {
         server: {
-            cache: false
-        },
-        connections: [
-            // {
-            //     port: 8000,
-            //     labels: ['web']
-            // },
-            {
-                host: 'localhost',
-                port: 8001,
-                labels: ['admin']
+            cache: false,
+            port: 8001,
+            host: 'localhost',
+            routes: {
+                cors: {
+                    origin: ['*'],
+                    credentials: true,
+                    additionalHeaders: ['cache-control', 'x-requested-with']
+                }
             }
-        ],
-        registrations: [
-            { plugin: 'vision' },
-            { plugin: 'inert' },
-            { plugin: 'hapi-auth-cookie' },
-            {
-                plugin: {
-                    register: 'hapi-swagger',
+        },
+        register: {
+            plugins: [
+                { plugin: 'vision' },
+                { plugin: 'inert' },
+                {
+                    plugin: 'good',
+                    options: {
+                        ops: {
+                            interval: 15000
+                        },
+                        reporters: {
+                            myConsoleReporter: [{
+                                module: 'good-console'
+                            }, 'stdout']
+                        }
+                    }
+                },
+                {
+                    plugin: 'hapi-swagger',
                     options: {
                         info: {
                             'title': 'API Documentation',
                             'version': pack.version
                         }
                     }
-                }
-            }
-        ]
+                },
+                { plugin: 'hapi-auth-bearer-token' }
+            ]
+        }
     },
     mail: email,
     appname: pack.name,
     firebase: {
-        root: 'https://hndelivery.firebaseio.com',
-        users: 'firedata/users',
-        items: 'firedata/client_data/groceries/items'
-    }
+        root: 'https://your-app-name.firebaseio.com',
+        users: 'reference/to/users',
+        items: 'reference/to/items'
+    },
+    serviceAccountKey,
+    cookieStrategy
 };
 
 conf.store = new confidence.Store(conf);
