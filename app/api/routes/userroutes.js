@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import usercontroller from '../controllers/usercontroller';
 
 let ThisModule = [];

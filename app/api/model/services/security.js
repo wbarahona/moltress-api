@@ -1,9 +1,10 @@
-/* jshint esversion: 6 */
-
-import Bcrypt from 'bcrypt';
+// bcrypt-nodejs
+import Bcrypt from 'bcrypt-nodejs';
+import Promise from 'promise';
+import AuthService from './auth';
+import config from '../../../config';
 
 const ThisModule = {};
-const saltRounds = 10;
 const users = [
     {
         username: 'john',
@@ -14,8 +15,8 @@ const users = [
     },
     {
         username: 'wbarahona',
-        password: '12345',   // 'secret'
-        name: 'Willmer Barahona',
+        password: '12345',   // 'secret' LOL
+        name: 'Jane Doe',
         id: 'abc1234a',
         scope: 'user'
     }
@@ -27,7 +28,7 @@ const validate = (request, username, password, callback) => {
         return callback(null, false);
     }
 
-    Bcrypt.compare(password, user.password, (err, isValid) => {
+    Bcrypt.compareSync(password, user.password, (err, isValid) => {
         callback(err, isValid, { id: user.id, name: user.name });
     });
 
@@ -36,16 +37,14 @@ const validate = (request, username, password, callback) => {
 
 ThisModule.simpleStrategy = { validateFunc: validate };
 
-// TODO: these should go to the config object
-ThisModule.cookieStrategy = {
-    password: 'somecrazycookiesecretthatcantbeguesseswouldgohere', // cookie secret
-    cookie: 'app-cookie', // Cookie name
-    isSecure: false, // required for non-https applications
-    ttl: 24 * 60 * 60 * 1000
-};
+ThisModule.cookieStrategy = config('/cookieStrategy');
+ThisModule.cookieStrategy.ttl = 24 * 60 * 60 * 1000;
 
+//
+// Make random string
+// -----------------------------------------------------------
 ThisModule.makerandom = () => {
-    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
     let text = '';
 
     for (let i = 0; i < 15; i++ ) {
@@ -58,15 +57,67 @@ ThisModule.makerandom = () => {
 //
 // Encrypt plaintext
 // -----------------------------------------------------------
-ThisModule.hash = (plaintext) => {
-    return Bcrypt.hash(plaintext, saltRounds);
+ThisModule.hash = async (plaintext) => {
+    const promise = new Promise((resolve, reject) => {
+        Bcrypt.hash(plaintext, null, null, (err, res) => { // bcrypt response is not a promise we can not use await
+            if (res) {
+                resolve(res);
+            } else {
+                reject(err);
+            }
+        });
+    });
+
+    return promise;
 };
 
 //
 // Compare passwords
 // -----------------------------------------------------------
-ThisModule.compare = (str1, hash) => {
-    return Bcrypt.compare(str1, hash);
+ThisModule.compare = async (str1, hash) => {
+    const promise = new Promise((resolve, reject) => {
+        Bcrypt.compare(str1, hash, (err, res) => { // bcrypt response is not a promise we can not use await
+            if (!err) {
+                resolve(res);
+            } else {
+                reject(err);
+            }
+        });
+    });
+
+    return promise;
+};
+
+//
+// Firebase Token strategy
+// -----------------------------------------------------------
+ThisModule.firebasetoken = {
+    allowMultipleHeaders: true,
+    validate: async (request, token) => {
+        // here is where you validate your token
+        // comparing with token validation from firebase
+        const payload = { idtoken: token };
+        let isValid = false;
+        let credentials = {};
+        let artifacts = {};
+
+        try {
+            const authResponse = await AuthService.checkfirebaseauthtoken(payload);
+            const { code } = authResponse;
+
+            if (code === 1) {
+                isValid = true;
+                credentials = { token };
+                artifacts = { test: 'info' };
+            } else {
+                isValid = false;
+            }
+        } catch(err) {
+            isValid = false;
+        }
+
+        return { isValid, credentials, artifacts };
+    }
 };
 
 export default ThisModule;

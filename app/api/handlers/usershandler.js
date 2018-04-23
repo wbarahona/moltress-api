@@ -1,38 +1,38 @@
-/* jshint esversion: 6 */
-
 import joi from 'joi';
 import UsersService from '../model/services/user';
 
 const UsersHandler = {};
+let statusCode = 500;
+let code = 0;
+let message = '';
+let content = {};
 
-UsersHandler.getuserbyid = (request, reply) => {
+UsersHandler.getuserbyid = async (request, h) => {
     const { params } = request;
     const { id } = params;
 
-    UsersService.getuser(id).then((res) => {
-        const { code, message, content } = res;
+    try {
+        const usersResponse = await UsersService.getuser(id);
 
-        reply({
-            statusCode: 200,
-            code: code,
-            message: message,
-            content: content
-        }).code(200);
-    }, (err) => {
-        const { code, message, content } = err;
+        statusCode = (usersResponse.code === 1) ? 200 : 500;
+        code = usersResponse.code;
+        message = usersResponse.message;
+        content = usersResponse.content;
+    } catch(err) {
+        message = 'Users Handler "getuserbyid" operation was unsuccessful';
+        content = err;
+    }
 
-        reply({
-            statusCode: 500,
-            code: code,
-            message: message,
-            content: content
-        }).code(500);
-    });
+    return h.response({
+        statusCode,
+        code,
+        message,
+        content
+    }).code(statusCode);
 };
 
-UsersHandler.saveuser = (request, reply) => {
+UsersHandler.saveuser = async (request, h) => {
     const { payload } = request;
-    const { active, age, code, email, fname, hash, lname, password, scope, uid } = payload;
     const userinfo = payload;
     const role = {
         accesses: {
@@ -45,34 +45,28 @@ UsersHandler.saveuser = (request, reply) => {
 
     userinfo.role = role;
 
-    UsersService.saveuser(userinfo).then((resp) => {
-        if (resp.code === 1) {
-            reply({
-                statusCode: 200,
-                code: 1,
-                message: 'User was saved correctly!',
-                content: {
-                    active: active,
-                    age: age,
-                    code: code,
-                    email: email,
-                    fname: fname,
-                    hash: hash,
-                    hasrequestedpwd: false,
-                    lname: lname,
-                    password: password,
-                    role: role,
-                    scope: scope,
-                    uid: uid
-                }
-            }).code(200);
-        }
-    });
+    try {
+        const usersResponse = await UsersService.saveuser(userinfo);
+
+        statusCode = (usersResponse.code === 1) ? 200 : 500;
+        code = usersResponse.code;
+        message = usersResponse.message;
+        content = usersResponse.content;
+    } catch(err) {
+        message = 'Users handler "saveuser" operation failed';
+        content = err;
+    }
+
+    return h.response({
+        statusCode,
+        code,
+        message,
+        content
+    }).code(statusCode);
 };
 
-UsersHandler.edituser = (request, reply) => {
+UsersHandler.edituser = async (request, h) => {
     const { params, payload } = request;
-    const { active, age, code, email, fname, hash, lname, password, scope, uid } = payload;
     const { id } = params;
     const userinfo = payload;
     const role = {
@@ -86,55 +80,47 @@ UsersHandler.edituser = (request, reply) => {
 
     userinfo.role = role;
 
-    UsersService.edituser(id, userinfo).then((resp) => {
-        if (resp.code === 1) {
-            reply({
-                statusCode: 200,
-                code: 1,
-                message: 'User was updated correctly!',
-                content: {
-                    active: active,
-                    age: age,
-                    code: code,
-                    email: email,
-                    fname: fname,
-                    hash: hash,
-                    lname: lname,
-                    password: password,
-                    hasrequestedpwd: false,
-                    role: role,
-                    scope: scope,
-                    uid: uid
-                }
-            }).code(200);
-        }
-    });
+    try {
+        const usersResponse = await UsersService.edituser(id, userinfo);
+
+        statusCode = (usersResponse === 1) ? 200 : 500;
+        code = usersResponse.code;
+        message = usersResponse.message;
+        content = usersResponse.content;
+    } catch(err) {
+        message = 'Users handler "edituser" operation was unsuccessful';
+        content = err;
+    }
+
+    return h.response({
+        statusCode,
+        code,
+        message,
+        content
+    }).code(statusCode);
 };
 
-UsersHandler.deleteuser = (request, reply) => {
+UsersHandler.deleteuser = async (request, h) => {
     const { params } = request;
     const { id } = params;
 
-    UsersService.deleteuser(id).then((resp) => {
-        const { code, message, content } = resp;
-        const statusCode = (code === 0) ? 500 : 200;
+    try {
+        const usersResponse = await UsersService.deleteuser(id);
 
-        reply({
-            statusCode: statusCode,
-            code: code,
-            message: message,
-            content: content
-        }).code(statusCode);
-    }, (err) => {
-        const { code, message, content } = err;
+        statusCode = (usersResponse.code === 1) ? 200 : 500;
+        code = usersResponse.code;
+        message = usersResponse.message;
+        content = usersResponse.content;
+    } catch(err) {
+        message = 'Users handler "deleteuser" operation was unsuccessful';
+    }
 
-        reply({
-            statusCode: 500,
-            code: code,
-            message: message,
-            content: content
-        }).code(500);
-    });
+    return h.response({
+        statusCode,
+        code,
+        message,
+        content
+    }).code(statusCode);
 };
 
 //
@@ -143,23 +129,23 @@ UsersHandler.deleteuser = (request, reply) => {
 UsersHandler.schema = {};
 UsersHandler.schema.user = joi.object().keys({
     statusCode: joi.number()
-                    .required()
-                    .integer()
-                    .description('This is the response code')
-                    .example(200),
+        .required()
+        .integer()
+        .description('This is the response code')
+        .example(200),
     code: joi.number()
-             .required()
-             .integer()
-             .description('This is the response code from the service')
-             .example(0),
+        .required()
+        .integer()
+        .description('This is the response code from the service')
+        .example(0),
     message: joi.string()
-                .required()
-                .description('This is the response message from the service, it shall be passed to the reply')
-                .example('This request was successful'),
+        .required()
+        .description('This is the response message from the service, it shall be passed to the reply')
+        .example('This request was successful'),
     content: joi.object()
-                .required()
-                .description('This is the response content, this holds an object with the item properties')
-                .example({name: 'Item1'})
+        .required()
+        .description('This is the response content, this holds an object with the item properties')
+        .example({name: 'Item1'})
 });
 
 export default UsersHandler;

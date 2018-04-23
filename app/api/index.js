@@ -1,33 +1,35 @@
-/* jshint esversion: 6 */
-
-
-import routes from  './routes';
 import Glue from 'glue';
+import routes from './routes';
 import InitService from './model/services/init';
 import SecurityService from './model/services/security';
 
 //
 // Bootstrap api here
 // ----------------------------------------------------------
-const { cookieStrategy } = SecurityService;
+const ThisModule = {};
+const { firebasetoken } = SecurityService;
 const { init, getApp } = InitService;
 
-exports.init = (manifest, options, cb) => {
-    Glue.compose(manifest, options, (err, Server) => {
+ThisModule.init = (manifest, options) => {
+    (async () => {
+        try {
+            const Server = await Glue.compose(manifest, options);
 
-        if (err) {
-            throw err;
+            Server.auth.strategy('bearer', 'bearer-access-token', firebasetoken);
+            // Server.auth.strategy('session', 'cookie', true, cookieStrategy);
+            Server.route(routes(Server));
+
+            await Server.start();
+            if (!getApp()) {
+                init();
+            }
+            console.log('Server started', Server.info.uri);
+        } catch (err) {
+            console.log('An error has happened!');
+            console.log(err);
+            process.exit(1);
         }
-        Server.auth.strategy('session', 'cookie', true, cookieStrategy);
-        Server.route(routes(Server));
-
-        Server.start((_err) => {
-
-            cb(_err, Server);
-        });
-    });
-
-    if (!getApp()) {
-        init();
-    }
+    })();
 };
+
+export default ThisModule;

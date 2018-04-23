@@ -1,11 +1,8 @@
-/* jshint esversion: 6 */
-
 import * as Firebase from 'firebase-admin';
-// import Firebase from 'firebase';
-import serviceAccount from '~/app/config/credentials/serviceAccountKey.json';
-import config from '~/app/config';
+import config from '../../../config';
 import mail from './mail';
 
+const serviceAccount = config('/serviceAccountKey');
 const ThisModule = {};
 const rootref = config('/firebase/root');
 

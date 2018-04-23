@@ -1,8 +1,5 @@
-/* jshint esversion: 6 */
-
-import Promise from 'promise';
 import Nodemailer from 'nodemailer';
-import config from '~/app/config';
+import config from '../../../config';
 
 const ThisModule = {};
 const modresponse = {
@@ -13,17 +10,19 @@ const modresponse = {
 let transporter = null;
 
 ThisModule.setupSMTP = () => {
-    const { mail } = config('/');
-    const { clients } = mail;
-    const { name, username, password } = clients.gmail;
+    const { gmail } = config('/mail/clients');
+    const { port, secure, host } = gmail;
 
     // create reusable transporter object using the default SMTP transport
     transporter = Nodemailer.createTransport({
-        service: name,
-        auth: {
-            user: username,
-            pass: password
-        }
+        host: host,
+        port: port,
+        secure: secure,
+        auth: false
+        // auth: {
+        //     user: username,
+        //     pass: password
+        // }
     });
 };
 
@@ -39,7 +38,22 @@ ThisModule.buildemailoptions = (from, to, subject, text, htmltemplate) => {
     };
 };
 
-ThisModule.sendmail = (mailoptions) => {
+ThisModule.sendmail = async (mailoptions) => {
+    try {
+        const transporterResponse = await transporter.sendMail(mailoptions);
+        const { messageId, response } = transporterResponse;
+
+        modresponse.code = 1;
+        modresponse.message = `Message ${ messageId } sent: ${ response }`;
+        modresponse.content = transporterResponse;
+    } catch(err) {
+        modresponse.code = 0;
+        modresponse.message = 'There was an error sending the email.';
+        modresponse.content = err;
+    }
+
+    return modresponse;
+    /*
     const promise = new Promise((resolve, reject) => {
         // send mail with defined transport object
         transporter.sendMail(mailoptions, (error, info) => {
@@ -64,6 +78,7 @@ ThisModule.sendmail = (mailoptions) => {
     });
 
     return promise;
+    */
 };
 
 export default ThisModule;

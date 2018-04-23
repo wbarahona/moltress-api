@@ -1,9 +1,8 @@
-/* jshint esversion: 6 */
-
-import Promise from 'promise';
 import * as Firebase from 'firebase-admin';
-import config from '~/app/config';
+import config from '../../../config';
 import SecurityService from './security';
+import MailService from './mail';
+import TemplateService from './template';
 
 const ThisModule = {};
 const usersRef = config('/firebase/users');
@@ -16,161 +15,246 @@ const response = {
 //
 // get user info by username
 // --------------------------------------------------------
-ThisModule.getuser = (uid) => {
+ThisModule.getuser = async (uid) => {
     const db = Firebase.database();
     const ref = db.ref(usersRef);
 
-    const promise = new Promise((resolve, reject) => {
-        ref.orderByChild('uid').equalTo(uid).once('value', (snapshot) => {
-            let userinfo = snapshot.val();
+    try {
+        const snapshot = await ref.orderByChild('uid').equalTo(uid).once('value');
+        let userinfo = snapshot.val();
 
-            // console.log(userinfo);
-
-            if (userinfo) {
-                userinfo = userinfo[Object.keys(userinfo)[0]];
-                delete userinfo.password;
-                response.code = 1;
-                response.message = `User by uid: ${ uid }, was found. `;
-                response.content = userinfo;
-                resolve(response);
-            } else {
-                response.code = 0;
-                response.message = `User by uid: ${ uid }, was not found. `;
-                reject(response);
-            }
-        }).catch((err) => {
+        if (userinfo) {
+            userinfo = userinfo[Object.keys(userinfo)[0]];
+            delete userinfo.password;
+            delete userinfo.role;
+            response.code = 1;
+            response.message = `User by uid: ${ uid }, was found. `;
+            response.content = userinfo;
+        } else {
             response.code = 0;
-            response.message = 'There is a error finding users';
-            response.content = err;
+            response.message = `User by uid: ${ uid }, was not found. `;
+        }
+    } catch(err) {
+        response.code = 0;
+        response.message = 'Find user operation was unsuccessful';
+        response.content = err;
+    }
 
-            reject(response);
-        });
-    });
-
-    return promise;
+    return response;
 };
 
 //
-// get user info by email
+// get users complete info and profile by email
 // --------------------------------------------------------
-ThisModule.getuserbyemail = (email) => {
-    const promise = new Promise((resolve, reject) => {
-        const db = Firebase.database();
-        const ref = db.ref(usersRef);
+ThisModule.getuserprofilebyemail = async (email) => {
+    const db = Firebase.database();
+    const ref = db.ref(usersRef);
+    let userprofile = null;
 
-        ref.orderByChild('email').equalTo(email).once('value', (snapshot) => {
-            let userinfo = snapshot.val();
+    try {
+        const snapshot = ref.orderByChild('email').equalTo(email).once('value');
 
-            if (userinfo) {
-                userinfo = userinfo[Object.keys(userinfo)[0]];
-                delete userinfo.password;
-                response.code = 1;
-                response.message = `User by email: ${ email }, was found. `;
-                response.content = userinfo;
-                resolve(response);
-            } else {
-                response.code = 0;
-                response.message = `User by email: ${ email }, was not found. `;
-                reject(response);
-            }
-        }).catch((err) => {
-            // console.log(err);
+        userprofile = snapshot.val();
 
+        response.code = 1;
+        response.message = `Profile for ${ email } was found`;
+        response.content = userprofile;
+    } catch(err) {
+        response.code = 0;
+        response.message = `Info for ${ email } was unable to be retrieved`;
+        response.content = err;
+    }
+
+    return response;
+};
+
+//
+// get user by email
+// --------------------------------------------------------
+ThisModule.getuserbyemail = async (email) => {
+    const db = Firebase.database();
+    const ref = db.ref(usersRef);
+
+    try {
+        // let [userprofile, snapshot] = await Promise.all([Firebase.auth().getUserByEmail(email), ref.orderByChild('email').equalTo(email).once('value')]);
+        const snapshot = await ref.orderByChild('email').equalTo(email).once('value');
+        let userinfo = snapshot.val();
+
+        // console.log(userprofile);
+        // console.log(snapshot.val());
+
+        if (userinfo) {
+            userinfo = userinfo[Object.keys(userinfo)[0]];
+            delete userinfo.role;
+            response.code = 1;
+            response.message = `User by email: ${ email }, was found. `;
+            response.content = userinfo;
+        } else {
             response.code = 0;
             response.message = `User by email: ${ email }, was not found. `;
-            response.content = err;
+        }
+    } catch(err) {
+        response.code = 0;
+        response.message = `User by email: ${ email }, was not found. `;
+        response.content = err;
+    }
 
-            reject(response);
-        });
-    });
-
-    return promise;
+    return response;
 };
 
 //
-// Save user to firebase
+// get user info by email returning password
+// WARNING: THIS IS FOR INTERNAL USE ONLY
 // --------------------------------------------------------
-ThisModule.saveuser = (userinfo) => {
+ThisModule.getuserbyemailwithpwd = async (email) => {
     const db = Firebase.database();
     const ref = db.ref(usersRef);
 
-    const promise = new Promise((resolve) => {
-        const { password } = userinfo;
+    try {
+        const snapshot = await ref.orderByChild('email').equalTo(email).once('value');
+        let userinfo = snapshot.val();
 
-        SecurityService.hash(password).then((resp) => {
-            userinfo.hash = resp;
-            ref.push(userinfo);
+        if (userinfo) {
+            userinfo = userinfo[Object.keys(userinfo)[0]];
             response.code = 1;
-            response.message = 'User info inserted correctly';
-            resolve(response);
-        });
-    });
+            response.message = `User by email: ${ email }, was found. `;
+            response.content = userinfo;
+        } else {
+            response.code = 0;
+            response.message = `User by email: ${ email }, was not found. `;
+        }
+    } catch(err) {
+        response.code = 0;
+        response.message = `User by email: ${ email } was not found`;
+        response.content = err;
+    }
 
-    return promise;
+    return response;
+};
+
+//
+// Save user to firebase TODO: use firebase admin createUser method https://firebase.google.com/docs/auth/admin/manage-users#create_a_user
+// generate a random password then hash it and send it to user for customize, save further info in db
+// --------------------------------------------------------
+ThisModule.saveuser = async (userinfo) => {
+    const db = Firebase.database();
+    const ref = db.ref(usersRef);
+    const { buildemailoptions, sendmail } = MailService;
+    const { getuserbyemail } = ThisModule;
+    const appname = config('/appname');
+    let tpl = null;
+
+    try {
+        const { email } = userinfo;
+        let key = null;
+
+        const userfound = await getuserbyemail(email);
+
+        if (userfound) {
+            // User is already created make the client know this specific scenario
+            response.code = 3;
+            response.message = `We found an error while searching for user: ${ userinfo.email } or this user already exists`;
+        } else {
+            // User search has been rejected which is not a bad thing, it means the email is not found
+            // then we proceed to register this new user
+            const random = SecurityService.makerandom();
+            const securityResponse = await SecurityService.hash(random);
+
+            userinfo.hash = securityResponse;
+
+            const snapshot = await ref.push(userinfo);
+
+            key = snapshot.key;
+
+            const update = {code: key};
+
+            tpl = TemplateService.gettemplate('newuser.html', userinfo);
+
+            const emailopt = buildemailoptions(
+                `"No Reply 👨‍💻" <no-reply@${ appname }.com>`,
+                userinfo.email,
+                'Welcome to yourappname',
+                'Welcome to our services',
+                tpl
+            );
+
+            sendmail(emailopt);
+
+            const updateResponse = await ThisModule.edituser(key, update);
+
+            response.code = updateResponse.code;
+            response.message = updateResponse.message;
+            response.content = {id: key};
+        }
+    } catch(err) {
+        response.code = 0;
+        response.message = 'Save user operation was unsuccessful';
+        response.content = err;
+    }
+
+    return response;
 };
 
 //
 // Edit user to firebase
 // --------------------------------------------------------
-ThisModule.edituser = (id, userinfo) => {
+ThisModule.edituser = async (id, userinfo) => {
     const db = Firebase.database();
     const ref = db.ref(usersRef);
+    const { password } = userinfo;
 
-    const promise = new Promise((resolve) => {
-        const { password } = userinfo;
-
+    try {
         if (password) {
-            SecurityService.hash(password).then((resp) => {
-                userinfo.hash = resp;
-                ref.child(id).update(userinfo);
-                response.code = 1;
-                response.message = 'User info updated correctly';
-                resolve(response);
-            });
+            const securityResponse = await SecurityService.hash(password);
+
+            userinfo.hash = securityResponse;
+
+            delete userinfo.password;
+            ref.child(id).update(userinfo);
+            response.code = 1;
+            response.message = 'User info updated correctly';
         } else {
             ref.child(id).update(userinfo);
             response.code = 1;
             response.message = 'User info updated correctly';
-            resolve(response);
         }
-    });
+    } catch(err) {
+        response.code = 0;
+        response.message = 'Update user operation was unsuccessful';
+        response.content = err;
+    }
 
-    return promise;
+    return response;
 };
 
 //
 // Delete user to firebase
 // --------------------------------------------------------
-ThisModule.deleteuser = (id) => {
+ThisModule.deleteuser = async (id) => {
     const db = Firebase.database();
     const ref = db.ref(usersRef);
+    const { getuser } = ThisModule;
 
-    const promise = new Promise((resolve, reject) => {
-        const { getuser } = ThisModule;
+    try {
+        const userResponse = await getuser(id);
+        const { code, content } = userResponse;
+        const { active } = content;
 
-        getuser(id).then((resp) => {
-            const { code, content } = resp;
-            const { active } = content;
-
-            if (code === 1 && active) {
-                ref.child(id).remove();
-                response.code = 1;
-                response.message = 'User was removed correctly.';
-            } else {
-                response.code = 0;
-                response.message = 'User to be deleted is not active or not found.';
-            }
-            resolve(response);
-        }, (err) => {
+        if (code === 1 && active) {
             ref.child(id).remove();
             response.code = 1;
-            response.message = 'Request was rejected.';
-            response.content = err;
-            reject(response);
-        });
-    });
+            response.message = 'User was removed correctly';
+        } else {
+            response.code = 0;
+            response.message = 'User to be deleted is not active or not found.';
+        }
+    } catch(err) {
+        response.code = 0;
+        response.message = 'Delete user operation was unsuccessful';
+        response.content = err;
+    }
 
-    return promise;
+    return response;
 };
 
 export default ThisModule;

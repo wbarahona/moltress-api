@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 import conf from './app/config';
 import api from './app/api';
 
@@ -9,8 +7,6 @@ const options = {
     relativeTo: __dirname
 };
 
-init(manifest, options, (err, Server) => {
-    console.log('Server started', Server.info.uri);
-});
+init(manifest, options);
 
 export default api;

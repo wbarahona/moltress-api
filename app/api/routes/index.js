@@ -1,6 +1,3 @@
-/* jshint esversion: 6 */
-
-// import controllers from '../controllers';
 import Path from 'path';
 import Fs from 'fs';
 

@@ -1,8 +1,5 @@
-/* jshint esversion: 6 */
-
-import Promise from 'promise';
 import * as Firebase from 'firebase-admin';
-import config from '~/app/config';
+import config from '../../../config';
 
 const ThisModule = {};
 const itemsRef = config('/firebase/items');
@@ -15,145 +12,94 @@ const response = {
 //
 // get item list
 // --------------------------------------------------------
-ThisModule.getitems = (from, limit) => {
+ThisModule.getitems = async (from, limit) => {
     const db = Firebase.database();
     const ref = db.ref(itemsRef);
     const itemlist = [];
+    let snapshot = null;
+    let count = 0;
 
-    const promise = new Promise((resolve, reject) => {
-        ref.orderByChild('active').equalTo(true).once('value', (snapshot) => {
-            const itemsCollection = snapshot.val();
-            let count = 0;
+    try {
+        snapshot = await ref.orderByChild('active').equalTo(true).once('value');
+        const itemsCollection = snapshot.val();
 
-            for (const itemid in itemsCollection) {
-                if (itemsCollection.hasOwnProperty(itemid)) {
-                    if (from <= count && count <= limit) {
-                        itemlist.push(itemsCollection[itemid]);
-                    }
-                    count++;
+        for (const itemid in itemsCollection) {
+            if (itemsCollection.hasOwnProperty(itemid)) {
+                if (from <= count && count <= limit) {
+                    itemlist.push(itemsCollection[itemid]);
                 }
+                count++;
             }
+        }
+    } catch (err) {
+        response.code = 0;
+        response.message = 'There is a error finding items';
+        response.content = err;
+    }
 
-            response.code = 1;
-            response.message = `fetched items list from ${ from } to ${ limit }`;
-            response.content = itemlist;
+    response.code = 1;
+    response.message = `fetched items list from ${ from } to ${ limit }`;
+    response.content = itemlist;
 
-            resolve(response);
-        }, (err) => {
-            response.code = 0;
-            response.message = 'There is a error finding items';
-            response.content = err;
-
-            reject(response);
-        });
-    });
-
-    return promise;
+    return response;
 };
 
 //
 // get item info by item id
 // --------------------------------------------------------
-ThisModule.getitembyid = (id) => {
+ThisModule.getitembyid = async (id) => {
     const db = Firebase.database();
     const ref = db.ref(itemsRef);
+    let iteminfo = null;
 
-    const promise = new Promise((resolve, reject) => {
-        ref.orderByChild('id').equalTo(id).once('value', (snapshot) => {
-            let iteminfo = snapshot.val();
+    try {
+        const snapshot = await ref.orderByChild('id').equalTo(id).once('value');
 
-            if (iteminfo) {
-                iteminfo = iteminfo[Object.keys(iteminfo)[0]];
-                delete iteminfo.password;
-                response.code = 1;
-                response.message = `Item by id: ${ id }, was found. `;
-                response.content = iteminfo;
-                resolve(response);
-            } else {
-                response.code = 0;
-                response.message = `Item by id: ${ id }, was not found. `;
-                reject(response);
-            }
-        }).catch((err) => {
+        iteminfo = snapshot.val();
+        if (iteminfo) {
+            iteminfo = iteminfo[Object.keys(iteminfo)[0]];
+            response.code = 1;
+            response.message = `Item by id: ${ id }, was found. `;
+            response.content = iteminfo;
+        } else {
             response.code = 0;
-            response.message = 'There is a error finding items';
-            response.content = err;
+            response.message = `Item by id: ${ id }, was not found. `;
+        }
+    } catch (err) {
+        response.code = 0;
+        response.message = 'There is a error finding items';
+        response.content = err;
+    }
 
-            reject(response);
-        });
-    });
-
-    return promise;
+    return response;
 };
 
 //
 // get item info by item name
 // --------------------------------------------------------
-ThisModule.getitembyname = (name) => {
+ThisModule.getitembyname = async (name) => {
     const db = Firebase.database();
     const ref = db.ref(itemsRef);
 
-    const promise = new Promise((resolve, reject) => {
-        ref.orderByChild('name').equalTo(name).once('value', (snapshot) => {
-            let iteminfo = snapshot.val();
+    try {
+        const snapshot = await ref.orderByChild('name').equalTo(name).once('value');
+        let iteminfo = snapshot.val();
 
-            if (iteminfo) {
-                iteminfo = iteminfo[Object.keys(iteminfo)[0]];
-                delete iteminfo.password;
-                response.code = 1;
-                response.message = `Item by name: ${ name }, was found. `;
-                response.content = iteminfo;
-                resolve(response);
-            } else {
-                response.code = 0;
-                response.message = `Item by name: ${ name }, was not found. `;
-                reject(response);
-            }
-        }).catch((err) => {
-            response.code = 0;
-            response.message = 'There is a error finding items';
-            response.content = err;
-
-            reject(response);
-        });
-    });
-
-    return promise;
-};
-
-//
-// Delete item to firebase
-// --------------------------------------------------------
-ThisModule.deleteitem = (id) => {
-    const db = Firebase.database();
-    const ref = db.ref(itemsRef);
-
-    const promise = new Promise((resolve, reject) => {
-        const { getitembyid } = ThisModule;
-
-        getitembyid(id).then((resp) => {
-            const { code, content } = resp;
-            const { active } = content;
-
-            if (code === 1 && active) {
-                ref.child(id).remove();
-                response.code = 1;
-                response.message = 'Item was removed correctly.';
-            } else {
-                response.code = 0;
-                response.message = 'Item to be deleted is not active or not found.';
-            }
-            resolve(response);
-        }, (err) => {
-            ref.child(id).remove();
+        if (iteminfo) {
+            iteminfo = iteminfo[Object.keys(iteminfo)[0]];
             response.code = 1;
-            response.message = 'Request was rejected.';
-            response.content = err;
-            reject(response);
-        });
-    });
+            response.message = `Item by name: ${ name }, was found. `;
+            response.content = iteminfo;
+        } else {
+            response.code = 0;
+            response.message = `Item by name: ${ name }, was not found. `;
+        }
+    } catch(err) {
+        response.message = 'Get item by name operation was unsuccessful';
+        response.content = err;
+    }
 
-    return promise;
+    return response;
 };
 
 export default ThisModule;
