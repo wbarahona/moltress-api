@@ -100,4 +100,32 @@ ThisModule.getcategorybyname = {
     auth: false
 };
 
+ThisModule.savefile = {
+    handler: itemshandler.savefile,
+    description: 'Saves a video into the local directory',
+    notes: 'Will save a mp4 video file into the local directory sent by the user, if you need a different typefile check the handler, and change its content-type header to the filetype you want',
+    tags: ['api', 'items', 'file', 'upload', 'save'],
+    plugins: {
+        'hapi-swagger': {
+            payloadType: 'form'
+        }
+    },
+    validate: {
+        payload: {
+            file: joi.any()
+                .meta({ swaggerType: 'file' })
+                .description('video mp4 file')
+        }
+    },
+    payload: {
+        maxBytes: 2000000,
+        parse: true,
+        output: 'stream'
+    },
+    response: {
+        schema: itemshandler.schema.item
+    },
+    auth: false
+};
+
 export default ThisModule;

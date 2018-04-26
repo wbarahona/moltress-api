@@ -7,6 +7,8 @@ const options = {
     relativeTo: __dirname
 };
 
+global.__basedir = __dirname;
+
 init(manifest, options);
 
 export default api;

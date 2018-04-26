@@ -1,5 +1,6 @@
 import joi from 'joi';
 import ItemsService from '../model/services/item';
+import FileService from '../model/services/file';
 
 const ItemsHandler = {};
 let statusCode = 500;
@@ -68,6 +69,29 @@ ItemsHandler.getitembyname = async (request, h) => {
         content = itemsResponse.content;
     } catch(err) {
         message = 'Items handler "getitembyname" operation was unsuccessful';
+        content = err;
+    }
+
+    return h.response({
+        statusCode,
+        code,
+        message,
+        content
+    }).code(statusCode);
+};
+
+ItemsHandler.savefile = async (request, h) => {
+    const { payload } = request;
+
+    try {
+        const fileResponse = await FileService.save(payload);
+
+        statusCode = (fileResponse.code === 1) ? 200 : 500;
+        code = fileResponse.code;
+        message = fileResponse.message;
+        content = fileResponse.content;
+    } catch(err) {
+        message = `Items handler "savefile" operation was unsuccessful: ${ err.message }`;
         content = err;
     }
 

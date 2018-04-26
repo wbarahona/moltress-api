@@ -36,6 +36,7 @@
     "bcrypt-nodejs": "0.0.3",
     "confidence": "^3.0.2",
     "firebase-admin": "^5.9.0",
+    "fs": "0.0.1-security",
     "glue": "^5.0.0",
     "handlebars": "^4.0.11",
     "handlebars-helpers": "^0.10.0",

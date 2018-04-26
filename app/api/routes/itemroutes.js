@@ -14,6 +14,12 @@ ThisModule = [
         method: 'GET',
         path: '/api/v1/item/{name}',
         config: itemcontroller.getitembyname
+    },
+    {
+        // Post a file
+        method: 'POST',
+        path: '/api/v1/file/',
+        config: itemcontroller.savefile
     }
 ];
 
