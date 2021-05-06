@@ -38,7 +38,7 @@
     "firebase-admin": "^5.13.1",
     "fs": "0.0.1-security",
     "glue": "^5.0.0",
-    "handlebars": "^4.7.0",
+    "handlebars": "^4.7.7",
     "handlebars-helpers": "^0.10.0",
     "hapi-auth-bearer-token": "^6.1.2",
     "hapi-swagger": "^9.4.2",
