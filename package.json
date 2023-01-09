@@ -35,7 +35,7 @@
     "babel-watch": "^2.0.8",
     "bcrypt-nodejs": "0.0.3",
     "confidence": "^3.0.2",
-    "firebase-admin": "^5.13.1",
+    "firebase-admin": "^11.4.1",
     "fs": "0.0.1-security",
     "glue": "^5.0.0",
     "handlebars": "^4.7.0",
